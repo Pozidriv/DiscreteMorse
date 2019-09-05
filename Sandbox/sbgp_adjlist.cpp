@@ -14,7 +14,6 @@ using namespace std;
 #include "matrix_ops.h"
 
 ifstream read_ptr;
-vector<vector<int> > mod3(vector<vector<int> > matrix);
 
 int main(void) {
     vector<vector<int> > Id = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
@@ -90,12 +89,3 @@ _jjj:; // Continue label for jjj loop
     return 0;
 }
 
-vector<vector<int> > mod3(vector<vector<int> > A) {
-    vector<vector<int> > M = A;
-    for(int i=0; i<A.size(); i++) {
-        for(int j=0; j<A.size(); j++) {
-            M[i][j] = A[i][j]%3;
-        }
-    }
-    return M;
-}

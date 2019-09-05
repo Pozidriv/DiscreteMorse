@@ -7,6 +7,7 @@ using namespace std;
 vector<vector<int> > transpose(vector<vector<int> > matrix);
 vector<vector<int> > matrix_mult(vector<vector<int> >, vector<vector<int> >);
 int matrix_equal(vector<vector<int> >, vector<vector<int> >);
+vector<vector<int> > mod3(vector<vector<int> >);
 
 vector<vector<int> > transpose(vector<vector<int> > matrix) {
     vector<vector<int> > T = matrix;
@@ -170,4 +171,14 @@ vector<vector<int> > matrix_4x4Inverse(vector<vector<int> > M)
     }
 
     return ret;
+}
+
+vector<vector<int> > mod3(vector<vector<int> > A) {
+    vector<vector<int> > M = A;
+    for(int i=0; i<A.size(); i++) {
+        for(int j=0; j<A.size(); j++) {
+            M[i][j] = abs(A[i][j])%3;
+        }
+    }
+    return M;
 }
