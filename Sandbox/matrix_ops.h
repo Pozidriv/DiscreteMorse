@@ -4,10 +4,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+class Matrix<T> {
+   public:
+      vector<vector<T> > entries;
+      int rows, cols;
+
+      void init_matrix(int,int);
+
+      Matrix transpose(void);
+      Matrix inverse(void); // ONLY FOR 4x4!!!
+      Matrix mult(Matrix);
+      Matrix equal(Matrix);
+      Matrix mod3(void);
+
+      void print();
+};
+
 vector<vector<int> > transpose(vector<vector<int> > matrix);
 vector<vector<int> > matrix_mult(vector<vector<int> >, vector<vector<int> >);
 int matrix_equal(vector<vector<int> >, vector<vector<int> >);
 vector<vector<int> > mod3(vector<vector<int> >);
+void print_matrix(vector<vector<int> >, int);
 
 vector<vector<int> > transpose(vector<vector<int> > matrix) {
     vector<vector<int> > T = matrix;
@@ -18,6 +35,7 @@ vector<vector<int> > transpose(vector<vector<int> > matrix) {
     }
     return T;
 }
+// Assuming square matrix
 vector<vector<int> > matrix_mult(vector<vector<int> > A, vector<vector<int> > B) {
     vector<vector<int> > C = A; // Fast init hacks much gud practise o yeaaaa
     for(int i=0; i<A.size(); i++) {
@@ -181,4 +199,13 @@ vector<vector<int> > mod3(vector<vector<int> > A) {
         }
     }
     return M;
+}
+
+void print_matrix(vector<vector<int> > A, int n) {
+   for(int i=0; i<n; i++) {
+      for(int j=0; j<n; j++) {
+         cout << A[i][j] << " ";
+      }
+      cout << endl;
+   }
 }
