@@ -4,21 +4,70 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Matrix<T> {
+#define VERBOSE 0
+
+// Class for integer entried matrices
+// Since we work with square matrices, most methods expect square matrices
+//
+class Matrix {
    public:
-      vector<vector<T> > entries;
+      vector<vector<long int> > entries;
       int rows, cols;
 
-      void init_matrix(int,int);
 
-      Matrix transpose(void);
-      Matrix inverse(void); // ONLY FOR 4x4!!!
-      Matrix mult(Matrix);
-      Matrix equal(Matrix);
-      Matrix mod3(void);
+      // METHODS
 
-      void print();
+      void init_matrix(matrix);
+
+      Matrix transpose(void); // Compute matrix tranpose
+      Matrix inverse(void);   // Compute 4x4 matrix inverse (of an invertible matrix)
+      Matrix mult(Matrix);    // Multiply two matrices
+      bool equal(Matrix);     // Check entrywise equality
+      Matrix mod3(void);      // Reduce mod3 entrywise
+
+      void print(ofstream);   // Print to file
+
+      // CONSTRUCTORS
+      
+      Matrix();                // Default constructor
+      Matrix(int);             // Creates empty matrix of specified size
+      Matrix(ifstream, int);   // Construct from file input
+
+      // OPERATOR OVERLOADING
+
+      Matrix operator+ (const Matrix&);
+      Matrix operator- (const Matrix&);
+      Matrix operator* (const Matrix&);
 };
+
+// Standard constructor
+Matrix::Matrix() {
+}
+
+// Empty square matrix constructor
+Matrix::Matrix(int n) {
+    rows = n; cols = n;
+    entries = vector<vector<int> >(n, vector<int>(n));
+}
+
+// File input constructor
+// Expected input: 
+// - square matrix of dimension n
+// - space/newline separated string of integers
+// - full 1st row, then full 2nd row, etc...
+Matrix::Matrix(ifstream str, int n) {
+    if(VERBOSE==1) {
+        cout << "[DEBUG] Constructing matrix from file..." << endl;
+    }
+
+    rows = n; cols = n;
+    entries = vector<vector<int> >(n, vector<int>(n));
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<n; j++) {
+            ifstream >> entries[i][j];
+        }
+    }
+}
 
 vector<vector<int> > transpose(vector<vector<int> > matrix);
 vector<vector<int> > matrix_mult(vector<vector<int> >, vector<vector<int> >);

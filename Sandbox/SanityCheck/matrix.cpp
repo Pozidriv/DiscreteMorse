@@ -3,4 +3,7 @@
 using namespace std;
 
 // Testing matrix_ops on some things
+int main(void) {
 
+   return 0;
+}
