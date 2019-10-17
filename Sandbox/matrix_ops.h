@@ -21,8 +21,8 @@ class Matrix {
 
       Matrix transpose(void); // Compute matrix tranpose
       Matrix inverse(void);   // Compute 4x4 matrix inverse (of an invertible matrix)
-      Matrix mult(Matrix);    // Multiply two matrices
-      bool equal(Matrix);     // Check entrywise equality
+      //Matrix mult(Matrix);    // Multiply two matrices
+      //bool equal(Matrix);     // Check entrywise equality
       Matrix mod3(void);      // Reduce mod3 entrywise
 
       void print(ofstream);   // Print to file
@@ -30,7 +30,8 @@ class Matrix {
       // CONSTRUCTORS
       
       Matrix();                // Default constructor
-      Matrix(int);             // Creates empty matrix of specified size
+      Matrix(int);             // Creates empty square matrix of specified size
+      Matrix(int,int);         // Creates empty nxk matrix
       Matrix(ifstream, int);   // Construct from file input
 
       // OPERATOR OVERLOADING
@@ -38,7 +39,10 @@ class Matrix {
       Matrix operator+ (const Matrix&);
       Matrix operator- (const Matrix&);
       Matrix operator* (const Matrix&);
+      bool operator== (const Matrix&);
 };
+
+// ************************* CONSTRUCTORS ********************************
 
 // Standard constructor
 Matrix::Matrix() {
@@ -46,8 +50,24 @@ Matrix::Matrix() {
 
 // Empty square matrix constructor
 Matrix::Matrix(int n) {
-    rows = n; cols = n;
-    entries = vector<vector<int> >(n, vector<int>(n));
+   if(n<=0) {
+      cout << "[Matrix] Error, expected positive dimensions" << endl;
+      exit(-1);
+   }
+   rows = n; cols = n;
+   entries = vector<vector<int> >(n, vector<int>(n));
+}
+
+// Empty nxk matrix constructor
+// n : number of rows
+// k : number of columns
+Matrix::Matrix(int n, int k) {
+   if(n<=0 || k<=0) {
+      cout << "[Matrix] Error, expected positive dimensions" << endl;
+      exit(-1);
+   }
+   rows = n; cols = k;
+   entries = vector<vector<int> >(n, vector<int>(k));
 }
 
 // File input constructor
@@ -56,19 +76,285 @@ Matrix::Matrix(int n) {
 // - space/newline separated string of integers
 // - full 1st row, then full 2nd row, etc...
 Matrix::Matrix(ifstream str, int n) {
-    if(VERBOSE==1) {
-        cout << "[DEBUG] Constructing matrix from file..." << endl;
-    }
+   if(n<=0) {
+      cout << "[Matrix] Error, expected positive dimensions" << endl;
+      exit(-1);
+   }
+   if(VERBOSE==1) {
+       cout << "[DEBUG:Matrix] Constructing matrix from file" << endl;
+   }
 
-    rows = n; cols = n;
-    entries = vector<vector<int> >(n, vector<int>(n));
-    for(int i=0; i<n; i++) {
-        for(int j=0; j<n; j++) {
-            ifstream >> entries[i][j];
-        }
-    }
+   rows = n; cols = n;
+   entries = vector<vector<int> >(n, vector<int>(n));
+   for(int i=0; i<n; i++) {
+       for(int j=0; j<n; j++) {
+           ifstream >> entries[i][j];
+       }
+   }
 }
 
+// ************************ OPERATORS ********************************
+
+Matrix::operator==(const &Matrix M);     // Check entrywise equality
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Checking matrix equality" << endl;
+   }
+
+   if(M.rows!=rows || M.cols!=cols) {
+      if(VERBOSE==1) {
+         cout << "[Matrix:operator==] Matrix dimension mismatch. Potential problem?" << endl;
+      }
+      return false;
+   }
+   int flag=0;
+   for(int i=0; i<rows; i++) {
+       for(int j=0; j<cols; j++) {
+           if(entries[i][j] != M.entries[i][j])
+               flag = 1;
+       }
+   }
+   return !flag;
+}
+
+Matrix::operator+(const &Matrix M) {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Adding matrices" << endl;
+   }
+   if(M.rows!=rows || M.cols!=cols) {
+      if(VERBOSE==1) {
+         cout << "[Matrix:operator+] Matrix dimension mismatch. Exiting" << endl;
+      }
+      exit(-1);
+   }
+
+   Matrix A(rows,cols);
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+          A.entries[i][j] = entries[i][j] + M.entries[i][j]
+      }
+   }
+
+   return A;
+}
+
+Matrix::operator-(const &Matrix M) {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Substracting matrices" << endl;
+   }
+
+   if(M.rows!=rows || M.cols!=cols) {
+      if(VERBOSE==1) {
+         cout << "[Matrix:operator-] Matrix dimension mismatch. Exiting" << endl;
+      }
+      exit(-1);
+   }
+
+   Matrix A(rows,cols);
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+          A.entries[i][j] = entries[i][j] - M.entries[i][j]
+      }
+   }
+
+   return A;
+}
+
+Matrix::operator*(const &Matrix M) {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Multipying matrices" << endl;
+   }
+
+   if(M.cols!=rows || M.rows!=cols) {
+      if(VERBOSE==1) {
+         cout << "[Matrix:operator*] Matrix dimension mismatch. Exiting" << endl;
+      }
+      exit(-1);
+   }
+
+   Matrix A(rows,cols);
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         long int sum=0;
+         for(int k=0; k<cols; k++) {
+            sum += entries[i][k] * M.entries[k][j];
+         }
+         A.entries[i][j] = sum;
+      }
+   }
+
+   return A;
+}
+
+// ************************* METHODS ********************************
+
+Matrix::transpose(void); // Compute matrix tranpose
+
+// Compute 4x4 matrix inverse
+// Expects 4x4 invertible matrix as input
+Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
+    inv[16], m[16];
+   Matrix ret(4,4), inv(4,4), m(4,4);
+
+   for (int i = 0; i < 16; i++) {
+      m[i] = M[i/4][i%4];
+   }
+
+   inv.entries[][] = m.entries[][][5]  * m.entries[][][10] * m.entries[][][15] - 
+            m.entries[][][5]  * m.entries[][][11] * m.entries[][][14] - 
+            m.entries[][][9]  * m.entries[][][6]  * m.entries[][][15] + 
+            m.entries[][][9]  * m.entries[][][7]  * m.entries[][][14] +
+            m.entries[][][13] * m.entries[][][6]  * m.entries[][][11] - 
+            m.entries[][][13] * m.entries[][][7]  * m.entries[][][10];
+
+   inv.entries[][][4] = -m.entries[][][4]  * m.entries[][][10] * m.entries[][][15] + 
+             m.entries[][][4]  * m.entries[][][11] * m.entries[][][14] + 
+             m.entries[][][8]  * m.entries[][][6]  * m.entries[][][15] - 
+             m.entries[][][8]  * m.entries[][][7]  * m.entries[][][14] - 
+             m.entries[][][12] * m.entries[][][6]  * m.entries[][][11] + 
+             m.entries[][][12] * m.entries[][][7]  * m.entries[][][10];
+
+   inv.entries[][][8] = m.entries[][][4]  * m.entries[][][9] * m.entries[][][15] - 
+            m.entries[][][4]  * m.entries[][][11] * m.entries[][][13] - 
+            m.entries[][][8]  * m.entries[][][5] * m.entries[][][15] + 
+            m.entries[][][8]  * m.entries[][][7] * m.entries[][][13] + 
+            m.entries[][][12] * m.entries[][][5] * m.entries[][][11] - 
+            m.entries[][][12] * m.entries[][][7] * m.entries[][][9];
+
+   inv.entries[][][12] = -m.entries[][][4]  * m.entries[][][9] * m.entries[][][14] + 
+              m.entries[][][4]  * m.entries[][][10] * m.entries[][][13] +
+              m.entries[][][8]  * m.entries[][][5] * m.entries[][][14] - 
+              m.entries[][][8]  * m.entries[][][6] * m.entries[][][13] - 
+              m.entries[][][12] * m.entries[][][5] * m.entries[][][10] + 
+              m.entries[][][12] * m.entries[][][6] * m.entries[][][9];
+
+   inv.entries[][][1] = -m.entries[][][1]  * m.entries[][][10] * m.entries[][][15] + 
+             m.entries[][][1]  * m.entries[][][11] * m.entries[][][14] + 
+             m.entries[][][9]  * m.entries[][][2] * m.entries[][][15] - 
+             m.entries[][][9]  * m.entries[][][3] * m.entries[][][14] - 
+             m.entries[][][13] * m.entries[][][2] * m.entries[][][11] + 
+             m.entries[][][13] * m.entries[][][3] * m.entries[][][10];
+
+   inv.entries[][][5] = m.entries[][][0]  * m.entries[][][10] * m.entries[][][15] - 
+            m.entries[][][0]  * m.entries[][][11] * m.entries[][][14] - 
+            m.entries[][][8]  * m.entries[][][2] * m.entries[][][15] + 
+            m.entries[][][8]  * m.entries[][][3] * m.entries[][][14] + 
+            m.entries[][][12] * m.entries[][][2] * m.entries[][][11] - 
+            m.entries[][][12] * m.entries[][][3] * m.entries[][][10];
+
+   inv.entries[][][9] = -m.entries[][][0]  * m.entries[][][9] * m.entries[][][15] + 
+             m.entries[][][0]  * m.entries[][][11] * m.entries[][][13] + 
+             m.entries[][][8]  * m.entries[][][1] * m.entries[][][15] - 
+             m.entries[][][8]  * m.entries[][][3] * m.entries[][][13] - 
+             m.entries[][][12] * m.entries[][][1] * m.entries[][][11] + 
+             m.entries[][][12] * m.entries[][][3] * m.entries[][][9];
+
+   inv.entries[][][13] = m.entries[][][0]  * m.entries[][][9] * m.entries[][][14] - 
+             m.entries[][][0]  * m.entries[][][10] * m.entries[][][13] - 
+             m.entries[][][8]  * m.entries[][][1] * m.entries[][][14] + 
+             m.entries[][][8]  * m.entries[][][2] * m.entries[][][13] + 
+             m.entries[][][12] * m.entries[][][1] * m.entries[][][10] - 
+             m.entries[][][12] * m.entries[][][2] * m.entries[][][9];
+
+   inv.entries[][][2] = m.entries[][][1]  * m.entries[][][6] * m.entries[][][15] - 
+            m.entries[][][1]  * m.entries[][][7] * m.entries[][][14] - 
+            m.entries[][][5]  * m.entries[][][2] * m.entries[][][15] + 
+            m.entries[][][5]  * m.entries[][][3] * m.entries[][][14] + 
+            m.entries[][][13] * m.entries[][][2] * m.entries[][][7] - 
+            m.entries[][][13] * m.entries[][][3] * m.entries[][][6];
+
+   inv.entries[][][6] = -m.entries[][][0]  * m.entries[][][6] * m.entries[][][15] + 
+             m.entries[][][0]  * m.entries[][][7] * m.entries[][][14] + 
+             m.entries[][][4]  * m.entries[][][2] * m.entries[][][15] - 
+             m.entries[][][4]  * m.entries[][][3] * m.entries[][][14] - 
+             m.entries[][][12] * m.entries[][][2] * m.entries[][][7] + 
+             m.entries[][][12] * m.entries[][][3] * m.entries[][][6];
+
+   inv.entries[][][10] = m.entries[][][0]  * m.entries[][][5] * m.entries[][][15] - 
+             m.entries[][][0]  * m.entries[][][7] * m.entries[][][13] - 
+             m.entries[][][4]  * m.entries[][][1] * m.entries[][][15] + 
+             m.entries[][][4]  * m.entries[][][3] * m.entries[][][13] + 
+             m.entries[][][12] * m.entries[][][1] * m.entries[][][7] - 
+             m.entries[][][12] * m.entries[][][3] * m.entries[][][5];
+
+   inv.entries[][][14] = -m.entries[][][0]  * m.entries[][][5] * m.entries[][][14] + 
+              m.entries[][][0]  * m.entries[][][6] * m.entries[][][13] + 
+              m.entries[][][4]  * m.entries[][][1] * m.entries[][][14] - 
+              m.entries[][][4]  * m.entries[][][2] * m.entries[][][13] - 
+              m.entries[][][12] * m.entries[][][1] * m.entries[][][6] + 
+              m.entries[][][12] * m.entries[][][2] * m.entries[][][5];
+
+   inv.entries[][][3] = -m.entries[][][1] * m.entries[][][6] * m.entries[][][11] + 
+             m.entries[][][1] * m.entries[][][7] * m.entries[][][10] + 
+             m.entries[][][5] * m.entries[][][2] * m.entries[][][11] - 
+             m.entries[][][5] * m.entries[][][3] * m.entries[][][10] - 
+             m.entries[][][9] * m.entries[][][2] * m.entries[][][7] + 
+             m.entries[][][9] * m.entries[][][3] * m.entries[][][6];
+
+   inv.entries[][][7] = m.entries[][][0] * m.entries[][][6] * m.entries[][][11] - 
+            m.entries[][][0] * m.entries[][][7] * m.entries[][][10] - 
+            m.entries[][][4] * m.entries[][][2] * m.entries[][][11] + 
+            m.entries[][][4] * m.entries[][][3] * m.entries[][][10] + 
+            m.entries[][][8] * m.entries[][][2] * m.entries[][][7] - 
+            m.entries[][][8] * m.entries[][][3] * m.entries[][][6];
+
+   inv.entries[][][11] = -m.entries[][][0] * m.entries[][][5] * m.entries[][][11] + 
+              m.entries[][][0] * m.entries[][][7] * m.entries[][][9] + 
+              m.entries[][][4] * m.entries[][][1] * m.entries[][][11] - 
+              m.entries[][][4] * m.entries[][][3] * m.entries[][][9] - 
+              m.entries[][][8] * m.entries[][][1] * m.entries[][][7] + 
+              m.entries[][][8] * m.entries[][][3] * m.entries[][][5];
+
+   inv.entries[][][15] = m.entries[][][0] * m.entries[][][5] * m.entries[][][10] - 
+             m.entries[][][0] * m.entries[][][6] * m.entries[][][9] - 
+             m.entries[][][4] * m.entries[][][1] * m.entries[][][10] + 
+             m.entries[][][4] * m.entries[][][2] * m.entries[][][9] + 
+             m.entries[][][8] * m.entries[][][1] * m.entries[][][6] - 
+             m.entries[][][8] * m.entries[][][2] * m.entries[][][5];
+
+   for (int i = 0; i < 16; i++) {
+       ret[i/4][i%4] = inv.entries[][][i];
+   }
+
+   return ret;
+}
+Matrix::mult(Matrix);    // Multiply two matrices
+
+
+// Reduce mod3 entrywise
+// Resulting entries are non-negative
+Matrix::mod3(void) {
+   Matrix M(rows, cols);
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Reducing matrix mod3" << endl;
+   }
+
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         M.entries[i][j] = abs(entries[i][j])%3;
+      }
+   }
+   return M;
+}
+
+// Print to file
+// Output format: full rows of space separated entries; rows separated by newlines.
+Matrix::print(ofstream out_ptr) {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Printing matrix to file" << endl;
+   }
+
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         out_ptr << entries[i][j] << " ";
+      }
+      out_ptr << endl;
+   }
+}
+
+
+
+//*************************** OLD ********************************
+//
 vector<vector<int> > transpose(vector<vector<int> > matrix);
 vector<vector<int> > matrix_mult(vector<vector<int> >, vector<vector<int> >);
 int matrix_equal(vector<vector<int> >, vector<vector<int> >);
@@ -114,130 +400,6 @@ int matrix_equal(vector<vector<int> > A, vector<vector<int> > B) {
 // source: https://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
 vector<vector<int> > matrix_4x4Inverse(vector<vector<int> > M)
 {
-    int inv[16], m[16];
-    vector<vector<int> > ret = M;
-
-    for (int i = 0; i < 16; i++) {
-        m[i] = M[i/4][i%4];
-    }
-
-    inv[0] = m[5]  * m[10] * m[15] - 
-             m[5]  * m[11] * m[14] - 
-             m[9]  * m[6]  * m[15] + 
-             m[9]  * m[7]  * m[14] +
-             m[13] * m[6]  * m[11] - 
-             m[13] * m[7]  * m[10];
-
-    inv[4] = -m[4]  * m[10] * m[15] + 
-              m[4]  * m[11] * m[14] + 
-              m[8]  * m[6]  * m[15] - 
-              m[8]  * m[7]  * m[14] - 
-              m[12] * m[6]  * m[11] + 
-              m[12] * m[7]  * m[10];
-
-    inv[8] = m[4]  * m[9] * m[15] - 
-             m[4]  * m[11] * m[13] - 
-             m[8]  * m[5] * m[15] + 
-             m[8]  * m[7] * m[13] + 
-             m[12] * m[5] * m[11] - 
-             m[12] * m[7] * m[9];
-
-    inv[12] = -m[4]  * m[9] * m[14] + 
-               m[4]  * m[10] * m[13] +
-               m[8]  * m[5] * m[14] - 
-               m[8]  * m[6] * m[13] - 
-               m[12] * m[5] * m[10] + 
-               m[12] * m[6] * m[9];
-
-    inv[1] = -m[1]  * m[10] * m[15] + 
-              m[1]  * m[11] * m[14] + 
-              m[9]  * m[2] * m[15] - 
-              m[9]  * m[3] * m[14] - 
-              m[13] * m[2] * m[11] + 
-              m[13] * m[3] * m[10];
-
-    inv[5] = m[0]  * m[10] * m[15] - 
-             m[0]  * m[11] * m[14] - 
-             m[8]  * m[2] * m[15] + 
-             m[8]  * m[3] * m[14] + 
-             m[12] * m[2] * m[11] - 
-             m[12] * m[3] * m[10];
-
-    inv[9] = -m[0]  * m[9] * m[15] + 
-              m[0]  * m[11] * m[13] + 
-              m[8]  * m[1] * m[15] - 
-              m[8]  * m[3] * m[13] - 
-              m[12] * m[1] * m[11] + 
-              m[12] * m[3] * m[9];
-
-    inv[13] = m[0]  * m[9] * m[14] - 
-              m[0]  * m[10] * m[13] - 
-              m[8]  * m[1] * m[14] + 
-              m[8]  * m[2] * m[13] + 
-              m[12] * m[1] * m[10] - 
-              m[12] * m[2] * m[9];
-
-    inv[2] = m[1]  * m[6] * m[15] - 
-             m[1]  * m[7] * m[14] - 
-             m[5]  * m[2] * m[15] + 
-             m[5]  * m[3] * m[14] + 
-             m[13] * m[2] * m[7] - 
-             m[13] * m[3] * m[6];
-
-    inv[6] = -m[0]  * m[6] * m[15] + 
-              m[0]  * m[7] * m[14] + 
-              m[4]  * m[2] * m[15] - 
-              m[4]  * m[3] * m[14] - 
-              m[12] * m[2] * m[7] + 
-              m[12] * m[3] * m[6];
-
-    inv[10] = m[0]  * m[5] * m[15] - 
-              m[0]  * m[7] * m[13] - 
-              m[4]  * m[1] * m[15] + 
-              m[4]  * m[3] * m[13] + 
-              m[12] * m[1] * m[7] - 
-              m[12] * m[3] * m[5];
-
-    inv[14] = -m[0]  * m[5] * m[14] + 
-               m[0]  * m[6] * m[13] + 
-               m[4]  * m[1] * m[14] - 
-               m[4]  * m[2] * m[13] - 
-               m[12] * m[1] * m[6] + 
-               m[12] * m[2] * m[5];
-
-    inv[3] = -m[1] * m[6] * m[11] + 
-              m[1] * m[7] * m[10] + 
-              m[5] * m[2] * m[11] - 
-              m[5] * m[3] * m[10] - 
-              m[9] * m[2] * m[7] + 
-              m[9] * m[3] * m[6];
-
-    inv[7] = m[0] * m[6] * m[11] - 
-             m[0] * m[7] * m[10] - 
-             m[4] * m[2] * m[11] + 
-             m[4] * m[3] * m[10] + 
-             m[8] * m[2] * m[7] - 
-             m[8] * m[3] * m[6];
-
-    inv[11] = -m[0] * m[5] * m[11] + 
-               m[0] * m[7] * m[9] + 
-               m[4] * m[1] * m[11] - 
-               m[4] * m[3] * m[9] - 
-               m[8] * m[1] * m[7] + 
-               m[8] * m[3] * m[5];
-
-    inv[15] = m[0] * m[5] * m[10] - 
-              m[0] * m[6] * m[9] - 
-              m[4] * m[1] * m[10] + 
-              m[4] * m[2] * m[9] + 
-              m[8] * m[1] * m[6] - 
-              m[8] * m[2] * m[5];
-
-    for (int i = 0; i < 16; i++) {
-        ret[i/4][i%4] = inv[i];
-    }
-
-    return ret;
 }
 
 vector<vector<int> > mod3(vector<vector<int> > A) {
