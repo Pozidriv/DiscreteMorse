@@ -17,8 +17,6 @@ class Matrix {
 
       // METHODS
 
-      void init_matrix(matrix);
-
       Matrix transpose(void); // Compute matrix tranpose
       Matrix inverse(void);   // Compute 4x4 matrix inverse (of an invertible matrix)
       //Matrix mult(Matrix);    // Multiply two matrices
@@ -55,7 +53,7 @@ Matrix::Matrix(int n) {
       exit(-1);
    }
    rows = n; cols = n;
-   entries = vector<vector<int> >(n, vector<int>(n));
+   entries = vector<vector<long int> >(n, vector<long int>(n));
 }
 
 // Empty nxk matrix constructor
@@ -67,7 +65,7 @@ Matrix::Matrix(int n, int k) {
       exit(-1);
    }
    rows = n; cols = k;
-   entries = vector<vector<int> >(n, vector<int>(k));
+   entries = vector<vector<long int> >(n, vector<long int>(k));
 }
 
 // File input constructor
@@ -85,17 +83,17 @@ Matrix::Matrix(ifstream str, int n) {
    }
 
    rows = n; cols = n;
-   entries = vector<vector<int> >(n, vector<int>(n));
+   entries = vector<vector<long int> >(n, vector<long int>(n));
    for(int i=0; i<n; i++) {
       for(int j=0; j<n; j++) {
-         ifstream >> entries[i][j];
+         str >> entries[i][j];
       }
    }
 }
 
 // ************************ OPERATORS ********************************
 
-Matrix::operator==(const &Matrix M);     // Check entrywise equality
+Matrix& Matrix::operator==(const &Matrix M) {     // Check entrywise equality
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Checking matrix equality" << endl;
    }
@@ -116,7 +114,7 @@ Matrix::operator==(const &Matrix M);     // Check entrywise equality
    return !flag;
 }
 
-Matrix::operator+(const &Matrix M) {
+Matrix& Matrix::operator+(const &Matrix M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Adding matrices" << endl;
    }
@@ -137,7 +135,7 @@ Matrix::operator+(const &Matrix M) {
    return A;
 }
 
-Matrix::operator-(const &Matrix M) {
+Matrix& Matrix::operator-(const &Matrix M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Substracting matrices" << endl;
    }
@@ -159,7 +157,7 @@ Matrix::operator-(const &Matrix M) {
    return A;
 }
 
-Matrix::operator*(const &Matrix M) {
+Matrix& Matrix::operator*(const &Matrix M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Multipying matrices" << endl;
    }
@@ -188,7 +186,7 @@ Matrix::operator*(const &Matrix M) {
 // ************************* METHODS ********************************
 
 // Compute matrix tranpose
-Matrix::transpose(void) {
+Matrix& Matrix::transpose(void) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Computing matrix transpose" << endl;
    }
@@ -205,7 +203,7 @@ Matrix::transpose(void) {
 
 // Compute 4x4 matrix inverse
 // Expects 4x4 invertible matrix as input
-Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
+Matrix& Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Computing matrix inverse" << endl;
    }
