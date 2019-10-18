@@ -81,15 +81,15 @@ Matrix::Matrix(ifstream str, int n) {
       exit(-1);
    }
    if(VERBOSE==1) {
-       cout << "[DEBUG:Matrix] Constructing matrix from file" << endl;
+      cout << "[DEBUG:Matrix] Constructing matrix from file" << endl;
    }
 
    rows = n; cols = n;
    entries = vector<vector<int> >(n, vector<int>(n));
    for(int i=0; i<n; i++) {
-       for(int j=0; j<n; j++) {
-           ifstream >> entries[i][j];
-       }
+      for(int j=0; j<n; j++) {
+         ifstream >> entries[i][j];
+      }
    }
 }
 
@@ -187,138 +187,144 @@ Matrix::operator*(const &Matrix M) {
 
 // ************************* METHODS ********************************
 
-Matrix::transpose(void); // Compute matrix tranpose
+// Compute matrix tranpose
+Matrix::transpose(void) {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Computing matrix transpose" << endl;
+   }
+   Matrix A(cols, rows);
+
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         A.entries[j][i] = entries[i][j];
+      }
+   }
+
+   return A;
+} 
 
 // Compute 4x4 matrix inverse
 // Expects 4x4 invertible matrix as input
 Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
-    inv[16], m[16];
-   Matrix ret(4,4), inv(4,4), m(4,4);
-
-   for (int i = 0; i < 16; i++) {
-      m[i] = M[i/4][i%4];
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Computing matrix inverse" << endl;
    }
+   Matrix inv(4,4);
 
-   inv.entries[][] = m.entries[][][5]  * m.entries[][][10] * m.entries[][][15] - 
-            m.entries[][][5]  * m.entries[][][11] * m.entries[][][14] - 
-            m.entries[][][9]  * m.entries[][][6]  * m.entries[][][15] + 
-            m.entries[][][9]  * m.entries[][][7]  * m.entries[][][14] +
-            m.entries[][][13] * m.entries[][][6]  * m.entries[][][11] - 
-            m.entries[][][13] * m.entries[][][7]  * m.entries[][][10];
+   inv.entries[0][0] = entries[1][1]  * entries[2][2] * entries[3][3] - 
+            entries[1][1]  * entries[2][3] * entries[3][2] - 
+            entries[2][1]  * entries[1][2]  * entries[3][3] + 
+            entries[2][1]  * entries[1][3]  * entries[3][2] +
+            entries[3][1] * entries[1][2]  * entries[2][3] - 
+            entries[3][1] * entries[1][3]  * entries[2][2];
 
-   inv.entries[][][4] = -m.entries[][][4]  * m.entries[][][10] * m.entries[][][15] + 
-             m.entries[][][4]  * m.entries[][][11] * m.entries[][][14] + 
-             m.entries[][][8]  * m.entries[][][6]  * m.entries[][][15] - 
-             m.entries[][][8]  * m.entries[][][7]  * m.entries[][][14] - 
-             m.entries[][][12] * m.entries[][][6]  * m.entries[][][11] + 
-             m.entries[][][12] * m.entries[][][7]  * m.entries[][][10];
+   inv.entries[1][0] = -entries[1][0]  * entries[2][2] * entries[3][3] + 
+             entries[1][0]  * entries[2][3] * entries[3][2] + 
+             entries[2][0]  * entries[1][2]  * entries[3][3] - 
+             entries[2][0]  * entries[1][3]  * entries[3][2] - 
+             entries[3][0] * entries[1][2]  * entries[2][3] + 
+             entries[3][0] * entries[1][3]  * entries[2][2];
 
-   inv.entries[][][8] = m.entries[][][4]  * m.entries[][][9] * m.entries[][][15] - 
-            m.entries[][][4]  * m.entries[][][11] * m.entries[][][13] - 
-            m.entries[][][8]  * m.entries[][][5] * m.entries[][][15] + 
-            m.entries[][][8]  * m.entries[][][7] * m.entries[][][13] + 
-            m.entries[][][12] * m.entries[][][5] * m.entries[][][11] - 
-            m.entries[][][12] * m.entries[][][7] * m.entries[][][9];
+   inv.entries[2][0] = entries[1][0]  * entries[2][1] * entries[3][3] - 
+            entries[1][0]  * entries[2][3] * entries[3][1] - 
+            entries[2][0]  * entries[1][1] * entries[3][3] + 
+            entries[2][0]  * entries[1][3] * entries[3][1] + 
+            entries[3][0] * entries[1][1] * entries[2][3] - 
+            entries[3][0] * entries[1][3] * entries[2][1];
 
-   inv.entries[][][12] = -m.entries[][][4]  * m.entries[][][9] * m.entries[][][14] + 
-              m.entries[][][4]  * m.entries[][][10] * m.entries[][][13] +
-              m.entries[][][8]  * m.entries[][][5] * m.entries[][][14] - 
-              m.entries[][][8]  * m.entries[][][6] * m.entries[][][13] - 
-              m.entries[][][12] * m.entries[][][5] * m.entries[][][10] + 
-              m.entries[][][12] * m.entries[][][6] * m.entries[][][9];
+   inv.entries[3][0] = -entries[1][0]  * entries[2][1] * entries[3][2] + 
+              entries[1][0]  * entries[2][2] * entries[3][1] +
+              entries[2][0]  * entries[1][1] * entries[3][2] - 
+              entries[2][0]  * entries[1][2] * entries[3][1] - 
+              entries[3][0] * entries[1][1] * entries[2][2] + 
+              entries[3][0] * entries[1][2] * entries[2][1];
 
-   inv.entries[][][1] = -m.entries[][][1]  * m.entries[][][10] * m.entries[][][15] + 
-             m.entries[][][1]  * m.entries[][][11] * m.entries[][][14] + 
-             m.entries[][][9]  * m.entries[][][2] * m.entries[][][15] - 
-             m.entries[][][9]  * m.entries[][][3] * m.entries[][][14] - 
-             m.entries[][][13] * m.entries[][][2] * m.entries[][][11] + 
-             m.entries[][][13] * m.entries[][][3] * m.entries[][][10];
+   inv.entries[0][1] = -entries[0][1]  * entries[2][2] * entries[3][3] + 
+             entries[0][1]  * entries[2][3] * entries[3][2] + 
+             entries[2][1]  * entries[0][2] * entries[3][3] - 
+             entries[2][1]  * entries[0][3] * entries[3][2] - 
+             entries[3][1] * entries[0][2] * entries[2][3] + 
+             entries[3][1] * entries[0][3] * entries[2][2];
 
-   inv.entries[][][5] = m.entries[][][0]  * m.entries[][][10] * m.entries[][][15] - 
-            m.entries[][][0]  * m.entries[][][11] * m.entries[][][14] - 
-            m.entries[][][8]  * m.entries[][][2] * m.entries[][][15] + 
-            m.entries[][][8]  * m.entries[][][3] * m.entries[][][14] + 
-            m.entries[][][12] * m.entries[][][2] * m.entries[][][11] - 
-            m.entries[][][12] * m.entries[][][3] * m.entries[][][10];
+   inv.entries[1][1] = entries[0][0]  * entries[2][2] * entries[3][3] - 
+            entries[0][0]  * entries[2][3] * entries[3][2] - 
+            entries[2][0]  * entries[0][2] * entries[3][3] + 
+            entries[2][0]  * entries[0][3] * entries[3][2] + 
+            entries[3][0] * entries[0][2] * entries[2][3] - 
+            entries[3][0] * entries[0][3] * entries[2][2];
 
-   inv.entries[][][9] = -m.entries[][][0]  * m.entries[][][9] * m.entries[][][15] + 
-             m.entries[][][0]  * m.entries[][][11] * m.entries[][][13] + 
-             m.entries[][][8]  * m.entries[][][1] * m.entries[][][15] - 
-             m.entries[][][8]  * m.entries[][][3] * m.entries[][][13] - 
-             m.entries[][][12] * m.entries[][][1] * m.entries[][][11] + 
-             m.entries[][][12] * m.entries[][][3] * m.entries[][][9];
+   inv.entries[2][1] = -entries[0][0]  * entries[2][1] * entries[3][3] + 
+             entries[0][0]  * entries[2][3] * entries[3][1] + 
+             entries[2][0]  * entries[0][1] * entries[3][3] - 
+             entries[2][0]  * entries[0][3] * entries[3][1] - 
+             entries[3][0] * entries[0][1] * entries[2][3] + 
+             entries[3][0] * entries[0][3] * entries[2][1];
 
-   inv.entries[][][13] = m.entries[][][0]  * m.entries[][][9] * m.entries[][][14] - 
-             m.entries[][][0]  * m.entries[][][10] * m.entries[][][13] - 
-             m.entries[][][8]  * m.entries[][][1] * m.entries[][][14] + 
-             m.entries[][][8]  * m.entries[][][2] * m.entries[][][13] + 
-             m.entries[][][12] * m.entries[][][1] * m.entries[][][10] - 
-             m.entries[][][12] * m.entries[][][2] * m.entries[][][9];
+   inv.entries[3][1] = entries[0][0]  * entries[2][1] * entries[3][2] - 
+             entries[0][0]  * entries[2][2] * entries[3][1] - 
+             entries[2][0]  * entries[0][1] * entries[3][2] + 
+             entries[2][0]  * entries[0][2] * entries[3][1] + 
+             entries[3][0] * entries[0][1] * entries[2][2] - 
+             entries[3][0] * entries[0][2] * entries[2][1];
 
-   inv.entries[][][2] = m.entries[][][1]  * m.entries[][][6] * m.entries[][][15] - 
-            m.entries[][][1]  * m.entries[][][7] * m.entries[][][14] - 
-            m.entries[][][5]  * m.entries[][][2] * m.entries[][][15] + 
-            m.entries[][][5]  * m.entries[][][3] * m.entries[][][14] + 
-            m.entries[][][13] * m.entries[][][2] * m.entries[][][7] - 
-            m.entries[][][13] * m.entries[][][3] * m.entries[][][6];
+   inv.entries[0][2] = entries[0][1]  * entries[1][2] * entries[3][3] - 
+            entries[0][1]  * entries[1][3] * entries[3][2] - 
+            entries[1][1]  * entries[0][2] * entries[3][3] + 
+            entries[1][1]  * entries[0][3] * entries[3][2] + 
+            entries[3][1] * entries[0][2] * entries[1][3] - 
+            entries[3][1] * entries[0][3] * entries[1][2];
 
-   inv.entries[][][6] = -m.entries[][][0]  * m.entries[][][6] * m.entries[][][15] + 
-             m.entries[][][0]  * m.entries[][][7] * m.entries[][][14] + 
-             m.entries[][][4]  * m.entries[][][2] * m.entries[][][15] - 
-             m.entries[][][4]  * m.entries[][][3] * m.entries[][][14] - 
-             m.entries[][][12] * m.entries[][][2] * m.entries[][][7] + 
-             m.entries[][][12] * m.entries[][][3] * m.entries[][][6];
+   inv.entries[1][2] = -entries[0][0]  * entries[1][2] * entries[3][3] + 
+             entries[0][0]  * entries[1][3] * entries[3][2] + 
+             entries[1][0]  * entries[0][2] * entries[3][3] - 
+             entries[1][0]  * entries[0][3] * entries[3][2] - 
+             entries[3][0] * entries[0][2] * entries[1][3] + 
+             entries[3][0] * entries[0][3] * entries[1][2];
 
-   inv.entries[][][10] = m.entries[][][0]  * m.entries[][][5] * m.entries[][][15] - 
-             m.entries[][][0]  * m.entries[][][7] * m.entries[][][13] - 
-             m.entries[][][4]  * m.entries[][][1] * m.entries[][][15] + 
-             m.entries[][][4]  * m.entries[][][3] * m.entries[][][13] + 
-             m.entries[][][12] * m.entries[][][1] * m.entries[][][7] - 
-             m.entries[][][12] * m.entries[][][3] * m.entries[][][5];
+   inv.entries[2][2] = entries[0][0]  * entries[1][1] * entries[3][3] - 
+             entries[0][0]  * entries[1][3] * entries[3][1] - 
+             entries[1][0]  * entries[0][1] * entries[3][3] + 
+             entries[1][0]  * entries[0][3] * entries[3][1] + 
+             entries[3][0] * entries[0][1] * entries[1][3] - 
+             entries[3][0] * entries[0][3] * entries[1][1];
 
-   inv.entries[][][14] = -m.entries[][][0]  * m.entries[][][5] * m.entries[][][14] + 
-              m.entries[][][0]  * m.entries[][][6] * m.entries[][][13] + 
-              m.entries[][][4]  * m.entries[][][1] * m.entries[][][14] - 
-              m.entries[][][4]  * m.entries[][][2] * m.entries[][][13] - 
-              m.entries[][][12] * m.entries[][][1] * m.entries[][][6] + 
-              m.entries[][][12] * m.entries[][][2] * m.entries[][][5];
+   inv.entries[3][2] = -entries[0][0]  * entries[1][1] * entries[3][2] + 
+              entries[0][0]  * entries[1][2] * entries[3][1] + 
+              entries[1][0]  * entries[0][1] * entries[3][2] - 
+              entries[1][0]  * entries[0][2] * entries[3][1] - 
+              entries[3][0] * entries[0][1] * entries[1][2] + 
+              entries[3][0] * entries[0][2] * entries[1][1];
 
-   inv.entries[][][3] = -m.entries[][][1] * m.entries[][][6] * m.entries[][][11] + 
-             m.entries[][][1] * m.entries[][][7] * m.entries[][][10] + 
-             m.entries[][][5] * m.entries[][][2] * m.entries[][][11] - 
-             m.entries[][][5] * m.entries[][][3] * m.entries[][][10] - 
-             m.entries[][][9] * m.entries[][][2] * m.entries[][][7] + 
-             m.entries[][][9] * m.entries[][][3] * m.entries[][][6];
+   inv.entries[0][3] = -entries[0][1] * entries[1][2] * entries[2][3] + 
+             entries[0][1] * entries[1][3] * entries[2][2] + 
+             entries[1][1] * entries[0][2] * entries[2][3] - 
+             entries[1][1] * entries[0][3] * entries[2][2] - 
+             entries[2][1] * entries[0][2] * entries[1][3] + 
+             entries[2][1] * entries[0][3] * entries[1][2];
 
-   inv.entries[][][7] = m.entries[][][0] * m.entries[][][6] * m.entries[][][11] - 
-            m.entries[][][0] * m.entries[][][7] * m.entries[][][10] - 
-            m.entries[][][4] * m.entries[][][2] * m.entries[][][11] + 
-            m.entries[][][4] * m.entries[][][3] * m.entries[][][10] + 
-            m.entries[][][8] * m.entries[][][2] * m.entries[][][7] - 
-            m.entries[][][8] * m.entries[][][3] * m.entries[][][6];
+   inv.entries[1][3] = entries[0][0] * entries[1][2] * entries[2][3] - 
+            entries[0][0] * entries[1][3] * entries[2][2] - 
+            entries[1][0] * entries[0][2] * entries[2][3] + 
+            entries[1][0] * entries[0][3] * entries[2][2] + 
+            entries[2][0] * entries[0][2] * entries[1][3] - 
+            entries[2][0] * entries[0][3] * entries[1][2];
 
-   inv.entries[][][11] = -m.entries[][][0] * m.entries[][][5] * m.entries[][][11] + 
-              m.entries[][][0] * m.entries[][][7] * m.entries[][][9] + 
-              m.entries[][][4] * m.entries[][][1] * m.entries[][][11] - 
-              m.entries[][][4] * m.entries[][][3] * m.entries[][][9] - 
-              m.entries[][][8] * m.entries[][][1] * m.entries[][][7] + 
-              m.entries[][][8] * m.entries[][][3] * m.entries[][][5];
+   inv.entries[2][3] = -entries[0][0] * entries[1][1] * entries[2][3] + 
+              entries[0][0] * entries[1][3] * entries[2][1] + 
+              entries[1][0] * entries[0][1] * entries[2][3] - 
+              entries[1][0] * entries[0][3] * entries[2][1] - 
+              entries[2][0] * entries[0][1] * entries[1][3] + 
+              entries[2][0] * entries[0][3] * entries[1][1];
 
-   inv.entries[][][15] = m.entries[][][0] * m.entries[][][5] * m.entries[][][10] - 
-             m.entries[][][0] * m.entries[][][6] * m.entries[][][9] - 
-             m.entries[][][4] * m.entries[][][1] * m.entries[][][10] + 
-             m.entries[][][4] * m.entries[][][2] * m.entries[][][9] + 
-             m.entries[][][8] * m.entries[][][1] * m.entries[][][6] - 
-             m.entries[][][8] * m.entries[][][2] * m.entries[][][5];
+   inv.entries[3][3] = entries[0][0] * entries[1][1] * entries[2][2] - 
+             entries[0][0] * entries[1][2] * entries[2][1] - 
+             entries[1][0] * entries[0][1] * entries[2][2] + 
+             entries[1][0] * entries[0][2] * entries[2][1] + 
+             entries[2][0] * entries[0][1] * entries[1][2] - 
+             entries[2][0] * entries[0][2] * entries[1][1];
 
-   for (int i = 0; i < 16; i++) {
-       ret[i/4][i%4] = inv.entries[][][i];
-   }
-
-   return ret;
+   return inv;
 }
-Matrix::mult(Matrix);    // Multiply two matrices
-
 
 // Reduce mod3 entrywise
 // Resulting entries are non-negative
