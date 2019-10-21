@@ -23,14 +23,14 @@ class Matrix {
       //bool equal(Matrix);     // Check entrywise equality
       Matrix mod3(void);      // Reduce mod3 entrywise
 
-      void print(ofstream);   // Print to file
+      void print(ofstream&);   // Print to file
 
       // CONSTRUCTORS
       
       Matrix();                // Default constructor
       Matrix(int);             // Creates empty square matrix of specified size
       Matrix(int,int);         // Creates empty nxk matrix
-      Matrix(ifstream, int);   // Construct from file input
+      Matrix(ifstream&, int);   // Construct from file input
 
       // OPERATOR OVERLOADING
 
@@ -73,7 +73,7 @@ Matrix::Matrix(int n, int k) {
 // - square matrix of dimension n
 // - space/newline separated string of integers
 // - full 1st row, then full 2nd row, etc...
-Matrix::Matrix(ifstream str, int n) {
+Matrix::Matrix(ifstream &str, int n) {
    if(n<=0) {
       cout << "[Matrix] Error, expected positive dimensions" << endl;
       exit(-1);
@@ -93,12 +93,12 @@ Matrix::Matrix(ifstream str, int n) {
 
 // ************************ OPERATORS ********************************
 
-Matrix& Matrix::operator==(const &Matrix M) {     // Check entrywise equality
+bool Matrix::operator==(const Matrix &B) {     // Check entrywise equality
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Checking matrix equality" << endl;
    }
 
-   if(M.rows!=rows || M.cols!=cols) {
+   if(B.rows!=rows || B.cols!=cols) {
       if(VERBOSE==1) {
          cout << "[Matrix:operator==] Matrix dimension mismatch. Potential problem?" << endl;
       }
@@ -107,14 +107,14 @@ Matrix& Matrix::operator==(const &Matrix M) {     // Check entrywise equality
    int flag=0;
    for(int i=0; i<rows; i++) {
        for(int j=0; j<cols; j++) {
-           if(entries[i][j] != M.entries[i][j])
+           if(entries[i][j] != B.entries[i][j])
                flag = 1;
        }
    }
    return !flag;
 }
 
-Matrix& Matrix::operator+(const &Matrix M) {
+Matrix Matrix::operator+(const Matrix &M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Adding matrices" << endl;
    }
@@ -128,14 +128,14 @@ Matrix& Matrix::operator+(const &Matrix M) {
    Matrix A(rows,cols);
    for(int i=0; i<rows; i++) {
       for(int j=0; j<cols; j++) {
-          A.entries[i][j] = entries[i][j] + M.entries[i][j]
+          A.entries[i][j] = entries[i][j] + M.entries[i][j];
       }
    }
 
    return A;
 }
 
-Matrix& Matrix::operator-(const &Matrix M) {
+Matrix Matrix::operator-(const Matrix &M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Substracting matrices" << endl;
    }
@@ -150,14 +150,14 @@ Matrix& Matrix::operator-(const &Matrix M) {
    Matrix A(rows,cols);
    for(int i=0; i<rows; i++) {
       for(int j=0; j<cols; j++) {
-          A.entries[i][j] = entries[i][j] - M.entries[i][j]
+          A.entries[i][j] = entries[i][j] - M.entries[i][j];
       }
    }
 
    return A;
 }
 
-Matrix& Matrix::operator*(const &Matrix M) {
+Matrix Matrix::operator*(const Matrix &M) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Multipying matrices" << endl;
    }
@@ -186,7 +186,7 @@ Matrix& Matrix::operator*(const &Matrix M) {
 // ************************* METHODS ********************************
 
 // Compute matrix tranpose
-Matrix& Matrix::transpose(void) {
+Matrix Matrix::transpose(void) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Computing matrix transpose" << endl;
    }
@@ -203,7 +203,7 @@ Matrix& Matrix::transpose(void) {
 
 // Compute 4x4 matrix inverse
 // Expects 4x4 invertible matrix as input
-Matrix& Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
+Matrix Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible matrix)
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Computing matrix inverse" << endl;
    }
@@ -326,7 +326,7 @@ Matrix& Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertibl
 
 // Reduce mod3 entrywise
 // Resulting entries are non-negative
-Matrix::mod3(void) {
+Matrix Matrix::mod3(void) {
    Matrix M(rows, cols);
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Reducing matrix mod3" << endl;
@@ -342,7 +342,7 @@ Matrix::mod3(void) {
 
 // Print to file
 // Output format: full rows of space separated entries; rows separated by newlines.
-Matrix::print(ofstream out_ptr) {
+void Matrix::print(ofstream &out_ptr) {
    if(VERBOSE==1) {
       cout << "[DEBUG:Matrix] Printing matrix to file" << endl;
    }

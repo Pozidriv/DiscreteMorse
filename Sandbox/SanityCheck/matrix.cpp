@@ -1,40 +1,81 @@
-#include <experimental/filesystem> // Link with -lstdc++fs !!
+#include <experimental/filesystem> // Link with -lstdc++fs !! AFTER the filename
 #include <bits/stdc++.h>
 #include "../matrix_ops.h"
 using namespace std;
 namespace fs = std::experimental::filesystem;
 
-bool test_op(string filename, string correct, string operation);
+bool test_op(string filename, string correct, int operation);
+string extract_filename(string path);
 
 // Testing matrix_ops on some things
 int main(void) {
    cout << "Testing matrix file..." << endl;
    
-   string work_directory = "./tests/matrix/";
+   string work_directory = fs::current_path();
+   //string work_directory = "~/Documents/McGill/Masters/Thesis/DiscreteMorse/Algorithms/Code/Sandbox/SanityCheck/tests/matrix";
    stringstream sub_directory;
-   sub_directory << work_directory;
+   sub_directory << work_directory << "/SanityCheck/tests/";
+   cout << "[DEBUG] Work directory is " << work_directory << endl;
    
    vector<string> operations = { "add", "sub", "mult", "4x4inverse", "transpose", "mod3" };
    
    for(int i=0; i<operations.size(); i++) {
+      cout << "[DEBUG] Currently testing: \"" << operations[i] << "\"" << endl;
       sub_directory << operations[i];
-      for(auto& p: fs::directory_iterator(sub_directory.str())) {
-         sub_directory << "/valid/" << p.file_name;
-         test_op(p.path(), sub_directory, i);
+
+      if(!fs::exists(sub_directory.str())) {
+         cout << "Error: directory '" << sub_directory.str() << "' does not exist. Skipping" << endl;
+         continue;
       }
 
-      sub_directory.clear();
-      sub_directory << work_directory;
+      for(auto& p: fs::directory_iterator(sub_directory.str())) {
+         
+         if(!is_directory(p)) {
+            sub_directory << "/valid/" << extract_filename(p.path());
+            string tmp;
+            sub_directory >> tmp;
+
+            // Perform test
+            cout << extract_filename(p.path()) << " ... " << flush;
+            if(test_op(p.path(), tmp, i) == false) {
+               cout << "FAILED" << endl;
+            } else {
+               cout << "PASSED" << endl;
+            }
+         }
+      }
+
+      sub_directory.str("");
+      sub_directory << work_directory << "/SanityCheck/tests/";
    }
 
    return 0;
+}
+
+// Helper function to extract only the filename of a full path string
+string extract_filename(string path) {
+   reverse_iterator<string::iterator> rev(path.end());
+   stringstream tmp;
+   while(*rev != '/') {
+      tmp << *rev++;
+   }
+   string convert;
+   tmp >> convert;
+   string result(convert.rbegin(), convert.rend()); // Create the reverse of the stringstream
+   return result;
 }
 
 // This function will read the matrices from the specified file and execute the specified operation.
 // Then compares output with the correct file
 // Expecting matrices of size 4x4
 bool test_op(string filename, string correct, int operation) {
-   ifstream operands_ptr, correct_ptr;
+   /*
+   cout << endl 
+      << "[DEBUG:test_op] \nfilename: '" << filename 
+      << "'\ncorrect: '" << correct 
+      << "'\nop: " << operation << endl;
+   */
+   ifstream operands_ptr, correct_ptr, thing;
    vector<Matrix> matrices;
    Matrix result, expected;
    int n;
@@ -44,7 +85,8 @@ bool test_op(string filename, string correct, int operation) {
    operands_ptr >> n;
 
    for(int i=0; i<n; i++) {
-      matrices.push_back(Matrix(operands_ptr, 4));
+      Matrix A(operands_ptr, 4);
+      matrices.push_back(A);
    }
 
    // Perform operation
