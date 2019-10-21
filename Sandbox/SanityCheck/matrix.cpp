@@ -31,9 +31,11 @@ int main(void) {
       for(auto& p: fs::directory_iterator(sub_directory.str())) {
          
          if(!is_directory(p)) {
-            sub_directory << "/valid/" << extract_filename(p.path());
+            stringstream valid;
+            valid << sub_directory.str() << "/valid/" << extract_filename(p.path());
             string tmp;
-            sub_directory >> tmp;
+            tmp = valid.str();
+            //cout << "[DEBUG] Correct is " << tmp << endl;
 
             // Perform test
             cout << extract_filename(p.path()) << " ... " << flush;
@@ -75,13 +77,12 @@ bool test_op(string filename, string correct, int operation) {
       << "'\ncorrect: '" << correct 
       << "'\nop: " << operation << endl;
    */
-   ifstream operands_ptr, correct_ptr, thing;
+   ifstream operands_ptr, correct_ptr;
    vector<Matrix> matrices;
    Matrix result, expected;
    int n;
 
    operands_ptr.open(filename, ifstream::in);
-   correct_ptr.open(correct, ifstream::in);
    operands_ptr >> n;
 
    for(int i=0; i<n; i++) {
@@ -105,10 +106,17 @@ bool test_op(string filename, string correct, int operation) {
                    break;
    }
 
+   operands_ptr.close();
    // Compare versus correct value
+   correct_ptr.open(correct, ifstream::in);
    expected = Matrix(correct_ptr, 4);
 
-   operands_ptr.close();
+   if(!(result == expected)) {
+      cout << endl << "EXPECTED" << endl;
+      expected.print();
+      cout << "RESULT" << endl;
+      result.print();
+   }
    correct_ptr.close();
    return (result == expected);
 }

@@ -24,6 +24,7 @@ class Matrix {
       Matrix mod3(void);      // Reduce mod3 entrywise
 
       void print(ofstream&);   // Print to file
+      void print();   // Print to file
 
       // CONSTRUCTORS
       
@@ -352,6 +353,20 @@ void Matrix::print(ofstream &out_ptr) {
          out_ptr << entries[i][j] << " ";
       }
       out_ptr << endl;
+   }
+}
+// Print to stdout 
+// Output format: full rows of space separated entries; rows separated by newlines.
+void Matrix::print() {
+   if(VERBOSE==1) {
+      cout << "[DEBUG:Matrix] Printing matrix to file" << endl;
+   }
+
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         cout << entries[i][j] << " ";
+      }
+      cout << endl;
    }
 }
 
