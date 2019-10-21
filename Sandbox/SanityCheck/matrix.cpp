@@ -20,7 +20,7 @@ int main(void) {
    vector<string> operations = { "add", "sub", "mult", "4x4inverse", "transpose", "mod3" };
    
    for(int i=0; i<operations.size(); i++) {
-      cout << "[DEBUG] Currently testing: \"" << operations[i] << "\"" << endl;
+      cout << "Currently testing: \"" << operations[i] << "\"" << endl;
       sub_directory << operations[i];
 
       if(!fs::exists(sub_directory.str())) {

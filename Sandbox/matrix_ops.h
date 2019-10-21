@@ -335,7 +335,7 @@ Matrix Matrix::mod3(void) {
 
    for(int i=0; i<rows; i++) {
       for(int j=0; j<cols; j++) {
-         M.entries[i][j] = abs(entries[i][j])%3;
+         M.entries[i][j] = ((entries[i][j]%3) + 3)%3;
       }
    }
    return M;
