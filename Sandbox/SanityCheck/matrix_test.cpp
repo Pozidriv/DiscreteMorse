@@ -1,6 +1,6 @@
 #include <experimental/filesystem> // Link with -lstdc++fs !! AFTER the filename
 #include <bits/stdc++.h>
-#include "../matrix_ops.h"
+#include "../matrix.h"
 using namespace std;
 namespace fs = std::experimental::filesystem;
 

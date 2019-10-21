@@ -1,0 +1,104 @@
+==> 2_gen.cpp <==
+// This file is to attempt generating all coset representatives from only two elements
+// According to Mike this should be the case for most pairs.
+//
+// (01/09/2019)
+//
+// (05/09/2019)
+// So apparently the result I got is very unsettling. 
+// I will try with other elements.
+
+using namespace std;
+
+==> Out <==
+
+==> SanityCheck <==
+
+==> compute_adjlist.cpp <==
+// This file is to create the adjacency lists L_{p,q} for a subgroup of the current group
+//
+// (18/08/2019)
+// The current subgroup is elements that are Id mod 3
+//
+// Format of output file:
+// [NUMBER OF LINES]
+//
+// [PAIR NUMBER] [COSET REP g_i] [COSET REP g_j]
+
+
+==> data_check.cpp <==
+// This file is to check the validity of the data sent by Aurel (05/08/2019)
+// The data was found to be correct up to transposing the matrix (09/08/2019)
+// The file is now made to parse the data and produce a readable file (09/08/2019)
+// LAST UPDATE (18/08/2019)
+//
+// The format of the readable file is as follows:
+// [N]
+//
+// [EDGE LABEL]
+// [K]
+
+==> euclid_lattice_square.cpp <==
+// Generates a bunch of points along a euclidean lattice, all within some cube in Rn
+// Reads input from a file
+
+
+// WARNING!!! Number of points goes up exponentially with the dimension.
+// Adjust radius accordingly
+// Actually this not the real side length.... side length is 2*SIDE_LEN + 1
+#define SIDE_LEN 2
+#define HEADER "1 0.5 1"
+#define POINT_TRAILER " 0"
+
+==> gen.cpp <==
+// This file is to attempt generating all elements of SO(Q)(L/3L)
+// (05/09/2019) 
+//
+// 
+
+using namespace std;
+#include <bits/stdc++.h>
+#include "matrix_ops.h"
+
+// generate_elts: Recursive function to generate all elts of distance r of origin in the free gp.
+
+==> matrix_ops.h <==
+// (18/08/2019)
+// Toolbox for matrix operations
+//
+#include <bits/stdc++.h>
+using namespace std;
+
+#define VERBOSE 0
+
+// Class for integer entried matrices
+// Since we work with square matrices, most methods expect square matrices
+
+==> sanityCheck.cpp <==
+// Since there's a lot of weird things going on we'll run tests to verify things work
+// We'll have a pool of tests, i.e. <input, expected output>
+// And we'll run the methods we want to test on these.
+
+==> sbgp_adjlist.cpp <==
+// This file is to create the coset representatives for a subgroup of the current group
+//
+// (18/08/2019)
+// The current subgroup is elements that are Id mod 3
+//
+// (26/08/2019)
+// Turns out what I did is wrong, I was computing an incomplete list of coset reps.
+//
+
+#define FILENAME "../Data/HypMan.txt"
+
+==> simplex_gen.cpp <==
+#include <bits/stdc++.h>
+using namespace std;
+
+ifstream read_ptr;
+ofstream write_ptr;
+
+int main(void) {
+    string file;
+    cout << "Output file? "<< endl;
+    cin >> file;
