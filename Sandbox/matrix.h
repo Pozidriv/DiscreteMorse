@@ -38,5 +38,6 @@ class Matrix {
       Matrix operator+ (const Matrix&);
       Matrix operator- (const Matrix&);
       Matrix operator* (const Matrix&);
+      Matrix& operator= (const Matrix&);
       bool operator== (const Matrix&);
 };

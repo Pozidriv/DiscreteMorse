@@ -1,8 +1,14 @@
 // (18/08/2019)
 // Toolbox for matrix operations
 //
+#ifndef _BITS
+#define _BITS
 #include <bits/stdc++.h>
+#endif
+#ifndef _MATRIX
+#define _MATRIX
 #include "matrix.h"
+#endif
 using namespace std;
 
 // ************************* CONSTRUCTORS ********************************
@@ -57,6 +63,19 @@ Matrix::Matrix(ifstream &str, int n) {
 }
 
 // ************************ OPERATORS ********************************
+
+Matrix& Matrix::operator=(const Matrix &B) {     
+   if(B.rows!=rows || B.cols != cols) {
+      cout << "[Matrix:operator=] Matrix dimension mismatch. Exiting" << endl;
+      exit(-1);
+   }
+   for(int i=0; i<rows; i++) {
+      for(int j=0; j<cols; j++) {
+         entries[i][j] = B.entries[i][j];
+      }
+   }
+   return *this;
+}
 
 bool Matrix::operator==(const Matrix &B) {     // Check entrywise equality
    if(VERBOSE==1) {
