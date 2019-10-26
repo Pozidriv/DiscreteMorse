@@ -11,4 +11,4 @@ matrix.o : matrix.h matrix.cpp
 	g++ -c 2_gen.cpp
 
 clean :
-	rm *.o a.out matrix_test
+	rm *.o a.out matrix_test run

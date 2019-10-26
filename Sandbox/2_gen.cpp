@@ -32,6 +32,10 @@ vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
 bool inList(Matrix A, vector<Matrix> &list);
 
 vector<Matrix>& two_gen(Matrix A, Matrix B, vector<Matrix> &quotient_elements, int expected_size) {
+   cout << "[DEBUG:two_gen] Generating subgroup elements" << endl;
+   if(quotient_elements.size() == 0) {
+      cout << "[WARNING:two_gen] Quotient elements is empty. Potential mistake?" << endl;
+   }
    ifstream in_ptr;
    in_ptr.open(ID_FILE, ifstream::in);
    // Reduced generators
@@ -48,19 +52,23 @@ vector<Matrix>& two_gen(Matrix A, Matrix B, vector<Matrix> &quotient_elements, i
    rA = B.inverse();
 
 
-   generate_matrices(rA, rB, ra, rb, quotient_elements, words, 5);
+   generate_matrices(rA, rB, ra, rb, quotient_elements, words, 10);
 
    return quotient_elements;
 }
 
 vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b, 
                                   vector<Matrix> &elements, vector<string>& words, int radius) {
+   cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
 //    - current current step number
 //    - index ignore entries before this integer, they have been expanded already
-   int current=0, index=1, tmp;
+   int current=0, index=0, tmp;
 
    for(int i=0; i<radius; i++) {
+      cout << "[DEBUG:generate_matrices] Step number " << i << endl;
+      cout << "[DEBUG:generate_matrices] Current number of elements: " << elements.size() << endl;
       for(int j=index; j<elements.size(); j++) {
+         //cout << "[DEBUG:generate_matrices] Computing elements to add to list" << endl;
          Matrix TA(4), TB(4), Ta(4), Tb(4);
 
          TA = elements[j] * A;
@@ -102,8 +110,10 @@ vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
 
 bool inList(Matrix A, vector<Matrix> &list) {
    for(int i=list.size()-1; i>-1; i--) {
-      if(A == list[i])
+      if(A == list[i]) {
+         //cout << "[DEBUG:inList] Found element, index " << i << endl;
          return true;
+      }
    }
    return false;
 }

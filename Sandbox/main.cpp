@@ -1,4 +1,5 @@
 // (22/10/2019) Central file from which computations will be performed.
+
 #ifndef _BITS
 #define _BITS
 #include <bits/stdc++.h>
@@ -12,6 +13,8 @@
 #include "2_gen.h"
 #endif
 
+#define ID_FILE "Data/4x4Id.txt"
+
 int main(int argc, char **argv) {
    vector<string> arguments(argc), options;
    options = { "2_gen" };
@@ -24,7 +27,7 @@ int main(int argc, char **argv) {
       cout << "Generating a subgroup using 2 elements" << endl;
       string gen_file1, gen_file2;
       ifstream gen1_ptr, gen2_ptr;
-      Matrix A, B;
+      Matrix A(4), B(4);
       vector<Matrix> quotient_elements;
       int expected_size = 1152;
 
@@ -36,7 +39,42 @@ int main(int argc, char **argv) {
       A = Matrix(gen1_ptr, 4);
       B = Matrix(gen2_ptr, 4);
 
+      // Sanity check: check the order of the elements
+      int order=1;
+      ifstream in_ptr;
+      in_ptr.open(ID_FILE, ifstream::in);
+      Matrix M(4), Id(in_ptr, 4);
+      M = A;
+      while(!(M == Id)) {
+         //M.print();
+         order++;
+         M = A*M;
+         M = M.mod3();
+         if(order > 2000) {
+            cout << "Houston, we've had a problem here." << endl;
+            exit(-1);
+         }
+      }
+      cout << "First generator order: " << order << endl;
+
+      order = 1;
+      M = B;
+      while(!(M == Id)) {
+         order++;
+         M = B*M;
+         M = M.mod3();
+         if(order > 2000) {
+            cout << "Houston, we've had a problem here." << endl;
+            exit(-1);
+         }
+      }
+      cout << "Second generator order: " << order << endl;
+
+      // Generate subgroup elements
+      quotient_elements.push_back(Id);
       two_gen(A, B, quotient_elements, expected_size);
+      cout << "Quotient computed successfuly." << endl;
+      cout << "Found " << quotient_elements.size() << " elements." << endl;
 
    } else { // If no option is matched
       cout << "Error: invalid arguments '";
