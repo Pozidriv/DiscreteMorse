@@ -19,54 +19,67 @@
 //    - B
 //    - a inverse of A
 //    - b inverse of B
+//    - wordA, word for A
+//    - wordB, word for B
+//    - worda, word for inverse of A
+//    - wordb, word for inverse of B
 //    - elements Matrix vector in which the generated matrices are to be returned
 //               This vector already has values and at each step we generate from them
 //               !!WARNING!! Expecting this to be non-empty to start with (at least Id)
 //    - words the words in A, B, a, b that each matrix represents
 //    - radius number of steps to performed
-vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b, 
-                                  vector<Matrix> &elements, vector<string>& words, int radius);
+// return value: pair of
+//    - Matrix vector : the quotient elements that were generated
+//    - string vector : the corresponding words
+void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b, 
+                       string wordA, string wordB, string worda, string wordb,
+                       vector<Matrix> &elements, vector<string>& words, int radius);
 
+// lowercase: helper function to convert an uppercase string to a lowercase one.
+string lowercase(string);
 
 // inList : helper function to check if a Matrix is already present in a list of matrices
 bool inList(Matrix A, vector<Matrix> &list);
 
-vector<Matrix>& two_gen(Matrix A, Matrix B, vector<Matrix> &quotient_elements, int expected_size) {
+void two_gen(Matrix A, Matrix B, string wordA, string wordB, 
+             vector<Matrix> &quotient_elements, vector<string> &words, int expected_size) {
    cout << "[DEBUG:two_gen] Generating subgroup elements" << endl;
    if(quotient_elements.size() == 0) {
       cout << "[WARNING:two_gen] Quotient elements is empty. Potential mistake?" << endl;
+   }
+   if(quotient_elements.size() != words.size()) {
+      cout << "[WARNING:two_gen] Quotient elements/word count mismatch. Potential mistake?" << endl;
    }
    ifstream in_ptr;
    in_ptr.open(ID_FILE, ifstream::in);
    // Reduced generators
    // ra, rb are inverses
    Matrix rA(4), rB(4), ra(4), rb(4), Id(in_ptr, 4); 
-
-   // words corresponding to the matrices that will be produced
-   vector<string> words;
-   words.push_back("");
+   string worda, wordb;
 
    rA = A;
    rB = B;
    ra = A.inverse();
    rA = B.inverse();
+   worda = lowercase(wordA);
+   wordb = lowercase(wordB);
 
+   generate_matrices(rA, rB, ra, rb, wordA, wordB, worda, wordb, quotient_elements, words, 10);
 
-   generate_matrices(rA, rB, ra, rb, quotient_elements, words, 10);
-
-   return quotient_elements;
 }
 
-vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b, 
-                                  vector<Matrix> &elements, vector<string>& words, int radius) {
+void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
+                       string wordA, string wordB, string worda, string wordb,
+                       vector<Matrix> &elements, vector<string>& words, int radius) {
    cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
 //    - current current step number
 //    - index ignore entries before this integer, they have been expanded already
-   int current=0, index=0, tmp;
+   int current=0, index=0, tmp=0;
 
    for(int i=0; i<radius; i++) {
       cout << "[DEBUG:generate_matrices] Step number " << i << endl;
       cout << "[DEBUG:generate_matrices] Current number of elements: " << elements.size() << endl;
+      cout << "[DEBUG:generate_matrices] Starting index: " << index << endl;
       for(int j=index; j<elements.size(); j++) {
          //cout << "[DEBUG:generate_matrices] Computing elements to add to list" << endl;
          Matrix TA(4), TB(4), Ta(4), Tb(4);
@@ -83,29 +96,28 @@ vector<Matrix>& generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
 
          if(!inList(TA, elements)) {
             elements.push_back(TA);
-            words.push_back(words[j] + "A");
+            words.push_back(words[j] + wordA);
          }
 
          if(!inList(TB, elements)) {
             elements.push_back(TB);
-            words.push_back(words[j] + "B");
+            words.push_back(words[j] + wordB);
          }
 
          if(!inList(Ta, elements)) {
             elements.push_back(Ta);
-            words.push_back(words[j] + "a");
+            words.push_back(words[j] + worda);
          }
 
          if(!inList(Tb, elements)) {
             elements.push_back(Tb);
-            words.push_back(words[j] + "b");
+            words.push_back(words[j] + wordb);
          }
       }
       index = tmp;               // Update index
       tmp = elements.size();     // Store the current number of elements
    }
 
-   return elements;
 }
 
 bool inList(Matrix A, vector<Matrix> &list) {
@@ -116,4 +128,12 @@ bool inList(Matrix A, vector<Matrix> &list) {
       }
    }
    return false;
+}
+
+string lowercase(string str) {
+   string out = str;
+   for(char &c: out) {
+      c = tolower(c);
+   }
+   return out;
 }
