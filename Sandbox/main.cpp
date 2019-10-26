@@ -40,9 +40,12 @@ void log(ofstream& out_file, First arg, const Strings&... rest) {
 }
 //*******************************************************************
 
+// Helper function to test if a string is an int
+bool is_int(const string&);
+
 int main(int argc, char **argv) {
    vector<string> arguments(argc), options;
-   options = { "2_gen" };
+   options = { "k_gen" };
    ofstream log_ptr;
    log_ptr.open("Out/log.txt", ofstream::out);
 
@@ -50,59 +53,78 @@ int main(int argc, char **argv) {
       arguments[i] = argv[i];
    }
 
-   if((arguments.size() >= 2) && arguments[1] == "2_gen") { // 2_gen
-      log(log_ptr, "Generating a subgroup using 2 elements");
-      string gen_file1, gen_file2, gen_file3, gen_file4;
-      ifstream gen1_ptr, gen2_ptr, gen3_ptr, gen4_ptr, id_ptr;
-      ofstream write_ptr;
+   if((arguments.size() >= 2) && arguments[1] == "k_gen") { // k_gen
+      if(arguments.size() < 3) {
+         cout << "Unspecified k. Exiting" << endl;
+         exit(-1);
+      }
+      if(!is_int(arguments[2]) || stoi(arguments[2]) <= 0) {
+         cout << "Unexpected value for k. Exiting" << endl;
+         exit(-1);
+      }
 
+      int k = stoi(arguments[2]);
+      int expected_size = 1152;
+      log(log_ptr, "Generating a subgroup using", arguments[2], "elements");
+
+      ifstream gen1_ptr, gen2_ptr, id_ptr;
+      ofstream write_ptr;
       id_ptr.open(ID_FILE, ifstream::in);
-      Matrix A(4), B(4), C(4), D(4), Id(id_ptr, 4);
-      string wordA, wordB, wordC, wordD;
+      Matrix Id(id_ptr, 4);
       vector<Matrix> quotient_elements;
       vector<string> words;
-      int expected_size = 1152;
 
-      gen_file1 = "Data/gen1.txt";
-      gen_file2 = "Data/gen2.txt";
-      gen_file3 = "Data/gen3.txt";
-      gen_file4 = "Data/gen4.txt";
-      gen1_ptr.open(gen_file1, ifstream::in);
-      gen2_ptr.open(gen_file2, ifstream::in);
-      gen3_ptr.open(gen_file3, ifstream::in);
-      gen4_ptr.open(gen_file4, ifstream::in);
-
-      A = Matrix(gen1_ptr, 4);
-      B = Matrix(gen2_ptr, 4);
-      C = Matrix(gen3_ptr, 4);
-      D = Matrix(gen4_ptr, 4);
-      wordA = "A";
-      wordB = "B";
-      wordC = "C";
-      wordD = "D";
-
-      // Sanity check: check the order of the elements
-      int order=0;
-      order = check_order(A);
-      log(log_ptr, "First generator order: ", order);
-      order = check_order(B);
-      log(log_ptr, "Second generator order: ", order);
-      order = check_order(C);
-      log(log_ptr, "Third generator order: ", order);
-      order = check_order(D);
-      log(log_ptr, "Fourth generator order: ", order);
-
-      // Generate subgroup elements
+      // Initialize things
       quotient_elements.push_back(Id);
       words.push_back("");
-      two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
-      log(log_ptr, "Quotient computed successfuly.");
-      log(log_ptr, "Found", quotient_elements.size(), "elements.");
 
-      log(log_ptr, "Trying with new generators");
-      two_gen(C, D, wordC, wordD, quotient_elements, words, expected_size);
-      log(log_ptr, "Found", quotient_elements.size(), "elements.");
-      
+      for(int i=0; i<k/2; i++) {
+         Matrix A(4), B(4);
+         string wordA, wordB, gen_file1, gen_file2;
+         stringstream tmp; // fml why do I have to do this?
+         
+
+         tmp << "Data/gen" << (2*(i+1))-1 << ".txt";
+         gen_file1 = tmp.str();
+         if((2*i) + 1 == k) { // if we have an odd number of generators, just replace the last one by the identity
+            gen_file2 = ID_FILE;
+         } else {
+            tmp.str("");
+            tmp.clear();
+            tmp << "Data/gen" << (2*(i+1)) << ".txt";
+            gen_file2 = tmp.str();
+         }
+         gen1_ptr.open(gen_file1, ifstream::in);
+         gen2_ptr.open(gen_file2, ifstream::in);
+         cout << gen_file1 << endl;
+         cout << gen_file2 << endl;
+         //log(log_ptr, i, "round generators filenames: ");
+         //log(log_ptr, gen_file1, endl, gen_file2);
+
+         A = Matrix(gen1_ptr, 4);
+         B = Matrix(gen2_ptr, 4);
+         char a,b;
+         a = 65 + (2*i); // hopefully we're using ASCII? 
+         b = 65 + (2*i) + 1;
+         wordA.push_back(a);
+         wordB.push_back(b);
+
+         // Sanity check: check the order of the elements
+         int order=0;
+         order = check_order(A);
+         log(log_ptr, 2*i, "generator order: ", order);
+         order = check_order(B);
+         log(log_ptr, (2*i +1) , "generator order: ", order);
+
+         // Generate subgroup elements
+         two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
+         log(log_ptr, "Quotient computed successfuly.");
+         log(log_ptr, "Found", quotient_elements.size(), "elements.");
+
+         // Close reading ptrs
+         gen1_ptr.close();
+         gen2_ptr.close();
+      }
 
       log(log_ptr, "Writing to file", OUT_FILE);
       write_ptr.open(OUT_FILE, ofstream::out);
@@ -110,7 +132,6 @@ int main(int argc, char **argv) {
          quotient_elements[i].print(write_ptr);
          write_ptr << endl;
       }
-
 
    } else { // If no option is matched
       cout << "Error: invalid arguments '";
@@ -132,4 +153,14 @@ int main(int argc, char **argv) {
    }
 
    return 0;
+}
+
+bool is_int(const string &str) {
+   if(str.empty() || ((!isdigit(str[0])) && (str[0] != '-') && (str[0] != '+') ) ) 
+      return false;
+
+   char *p;
+   strtol(str.c_str(), &p, 10); // Expecting integers to have at most 10 digits
+
+   return (*p == 0);
 }

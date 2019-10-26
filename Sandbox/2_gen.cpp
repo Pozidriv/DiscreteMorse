@@ -39,6 +39,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
 string lowercase(string);
 
 // inList : helper function to check if a Matrix is already present in a list of matrices
+// OPTIMIZATION: consider using a hash table to avoid O(n^2) runtime
 bool inList(Matrix A, vector<Matrix> &list);
 
 void two_gen(Matrix A, Matrix B, string wordA, string wordB, 
@@ -71,15 +72,20 @@ void two_gen(Matrix A, Matrix B, string wordA, string wordB,
 void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
                        string wordA, string wordB, string worda, string wordb,
                        vector<Matrix> &elements, vector<string>& words, int radius) {
-   cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
+   //cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
 //    - current current step number
 //    - index ignore entries before this integer, they have been expanded already
    int current=0, index=0, tmp=0;
 
    for(int i=0; i<radius; i++) {
-      cout << "[DEBUG:generate_matrices] Step number " << i << endl;
-      cout << "[DEBUG:generate_matrices] Current number of elements: " << elements.size() << endl;
+      cout << "[DEBUG:generate_matrices] Step #" << i 
+           << ". Current # of elements: " << elements.size() << endl;
       cout << "[DEBUG:generate_matrices] Starting index: " << index << endl;
+      
+      if(elements.size() == index) {
+         cout << "[DEBUG:generate_matrices] We're done. Exiting" << endl;
+         return;
+      }
       for(int j=index; j<elements.size(); j++) {
          //cout << "[DEBUG:generate_matrices] Computing elements to add to list" << endl;
          Matrix TA(4), TB(4), Ta(4), Tb(4);
@@ -113,6 +119,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
             elements.push_back(Tb);
             words.push_back(words[j] + wordb);
          }
+         //cout << endl;
       }
       index = tmp;               // Update index
       tmp = elements.size();     // Store the current number of elements
@@ -124,6 +131,7 @@ bool inList(Matrix A, vector<Matrix> &list) {
    for(int i=list.size()-1; i>-1; i--) {
       if(A == list[i]) {
          //cout << "[DEBUG:inList] Found element, index " << i << endl;
+         //cout << i << " ";
          return true;
       }
    }
