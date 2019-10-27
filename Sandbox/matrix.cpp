@@ -308,6 +308,17 @@ Matrix Matrix::inverse(void) {   // Compute 4x4 matrix inverse (of an invertible
    return inv;
 }
 
+// Gaussian elimination?
+int Matrix::det(void) {
+   int det = 0;
+   if(cols == 2 && rows == 2) {
+      det = (entries[0][0]*entries[1][1]) - (entries[1][0]*entries[0][1]);
+      return det;
+   } else {
+      
+   }
+}
+
 // Reduce mod3 entrywise
 // Resulting entries are non-negative
 Matrix Matrix::mod3(void) {

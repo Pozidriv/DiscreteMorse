@@ -129,6 +129,7 @@ int main(int argc, char **argv) {
       log(log_ptr, "Writing to file", OUT_FILE);
       write_ptr.open(OUT_FILE, ofstream::out);
       for(int i=0; i<quotient_elements.size(); i++) {
+         write_ptr << words[i] << endl;
          quotient_elements[i].print(write_ptr);
          write_ptr << endl;
       }

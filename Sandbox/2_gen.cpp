@@ -61,11 +61,11 @@ void two_gen(Matrix A, Matrix B, string wordA, string wordB,
    rA = A;
    rB = B;
    ra = A.inverse();
-   rA = B.inverse();
+   rb = B.inverse();
    worda = lowercase(wordA);
    wordb = lowercase(wordB);
 
-   generate_matrices(rA, rB, ra, rb, wordA, wordB, worda, wordb, quotient_elements, words, 10);
+   generate_matrices(rA, rB, ra, rb, wordA, wordB, worda, wordb, quotient_elements, words, 20);
 
 }
 
@@ -75,7 +75,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
    //cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
 //    - current current step number
 //    - index ignore entries before this integer, they have been expanded already
-   int current=0, index=0, tmp=0;
+   int current=0, index=0, tmp=0, size=1;
 
    for(int i=0; i<radius; i++) {
       cout << "[DEBUG:generate_matrices] Step #" << i 
@@ -86,9 +86,10 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
          cout << "[DEBUG:generate_matrices] We're done. Exiting" << endl;
          return;
       }
-      for(int j=index; j<elements.size(); j++) {
+      size = elements.size(); // elements.size() will change
+      for(int j=index; j<size; j++) {
          //cout << "[DEBUG:generate_matrices] Computing elements to add to list" << endl;
-         Matrix TA(4), TB(4), Ta(4), Tb(4);
+         Matrix TA(4), TB(4), Ta(4), Tb(4), zero(4);
 
          TA = elements[j] * A;
          TB = elements[j] * B;
@@ -100,6 +101,9 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
          Ta = Ta.mod3();
          Tb = Tb.mod3();
 
+         if(TA == zero || TB == zero || Ta == zero || Tb == zero) {
+            cout << "[WARNING:generate_matrices] Got zero matrix. Potential problem?" << endl;
+         }
          if(!inList(TA, elements)) {
             elements.push_back(TA);
             words.push_back(words[j] + wordA);
@@ -119,7 +123,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
             elements.push_back(Tb);
             words.push_back(words[j] + wordb);
          }
-         //cout << endl;
+//         cout << endl;
       }
       index = tmp;               // Update index
       tmp = elements.size();     // Store the current number of elements
@@ -131,7 +135,7 @@ bool inList(Matrix A, vector<Matrix> &list) {
    for(int i=list.size()-1; i>-1; i--) {
       if(A == list[i]) {
          //cout << "[DEBUG:inList] Found element, index " << i << endl;
-         //cout << i << " ";
+//         cout << i << " ";
          return true;
       }
    }

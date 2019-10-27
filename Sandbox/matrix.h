@@ -17,21 +17,24 @@ class Matrix {
 
       // METHODS
 
-      Matrix transpose(void); // Compute matrix tranpose
-      Matrix inverse(void);   // Compute 4x4 matrix inverse (of an invertible matrix)
-      //Matrix mult(Matrix);    // Multiply two matrices
-      //bool equal(Matrix);     // Check entrywise equality
-      Matrix mod3(void);      // Reduce mod3 entrywise
+      Matrix transpose(void);       // Compute matrix tranpose
+      Matrix inverse(void);         // Compute 4x4 matrix inverse (of an invertible matrix)
+      //Matrix mult(Matrix);        // Multiply two matrices
+      //bool equal(Matrix);         // Check entrywise equality
+      Matrix mod3(void);            // Reduce mod3 entrywise
+      int det(void);                // Compute 4x4 determinant 
+      Matrix submatrix(int,int);    // Submatrix 
 
-      void print(ofstream&);   // Print to file
-      void print();   // Print to file
+      void print(ofstream&);        // Print to file
+      void print();                 // Print to file (default)
 
       // CONSTRUCTORS
       
-      Matrix();                // Default constructor
-      Matrix(int);             // Creates empty square matrix of specified size
-      Matrix(int,int);         // Creates empty nxk matrix
-      Matrix(ifstream&, int);   // Construct from file input
+      Matrix();                     // Default constructor
+      Matrix(int);                  // Creates empty square matrix of specified size
+      Matrix(int,int);              // Creates empty nxk matrix
+      Matrix(ifstream&, int);       // Construct from file input
+      Matrix(Matrix,int,int);       // Submatrix constructor
 
       // OPERATOR OVERLOADING
 
