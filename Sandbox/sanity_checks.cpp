@@ -20,7 +20,8 @@ int check_order(Matrix &A) {
    Matrix M(4), Id(in_ptr, 4);
    M = A;
    while(!(M == Id)) {
-      //M.print();
+      M.print();
+      cout << endl;
       order++;
       M = A*M;
       M = M.mod3();
@@ -28,6 +29,9 @@ int check_order(Matrix &A) {
          cout << "Houston, we've had a problem here." << endl;
          exit(-1);
       }
+   }
+   if( (1152 % order) != 0) {
+      cout << "Order does not divide 1152..." << endl;
    }
    return order;
 }
