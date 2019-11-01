@@ -383,11 +383,11 @@ int main(int argc, char **argv) {
          
          log(log_ptr, "Writing adjacency lists to file", filename);
          write_ptr.open(filename, ofstream::out);
-         write_ptr << adj_lists.size() << endl;
+         write_ptr << counter << endl;
          for(int i=0; i<adj_lists.size(); i++) {
             // Ignore empty lists
             if(adj_lists[i].size() == 0) continue;
-            write_ptr << adj_lists[i].size() << endl;
+            write_ptr << i << " " << adj_lists[i].size() << endl;
             for(int j=0; j<adj_lists[i].size(); j++) {
                adj_lists[i][j].print(write_ptr);
             }
