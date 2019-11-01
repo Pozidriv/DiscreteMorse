@@ -20,8 +20,8 @@ int check_order(Matrix &A) {
    Matrix M(4), Id(in_ptr, 4);
    M = A;
    while(!(M == Id)) {
-      M.print();
-      cout << endl;
+//      M.print();
+//      cout << endl;
       order++;
       M = A*M;
       M = M.mod3();

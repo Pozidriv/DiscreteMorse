@@ -78,10 +78,11 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
    int current=0, index=0, tmp=0, size=1;
 
    for(int i=0; i<radius; i++) {
+/*
       cout << "[DEBUG:generate_matrices] Step #" << i 
            << ". Current # of elements: " << elements.size() << endl;
       cout << "[DEBUG:generate_matrices] Starting index: " << index << endl;
-      
+*/      
       if(elements.size() == index) {
          cout << "[DEBUG:generate_matrices] We're done. Exiting" << endl;
          return;
