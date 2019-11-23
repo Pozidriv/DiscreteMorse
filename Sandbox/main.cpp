@@ -16,6 +16,11 @@
 #define _SANITY_CHECKS
 #include "sanity_checks.h"
 #endif
+#ifndef _RIPS_HOMOLOGY
+#define _RIPS_HOMOLOGY
+#include "rips_homology.h"
+#endif
+
 
 #define ID_FILE "Data/4x4Id.txt"
 #define OUT_FILE "Out/quotient_elements.txt"
@@ -28,9 +33,12 @@
 #define CREPEC 2
 #define ADJ_LISTS "adj_lists"
 #define ADJ_LISTC 1
+#define GRAPH_HOMOL "graph_homology"
+#define GRAPH_HOMOLC 1
 
 // helper functions to print
 // !!! WARNING !!! Do not put the following at the end of the file.
+// The alternative would be to make them inline but ok.
 // https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file
 void log(ofstream& out_file);
 template<typename First, typename ... Strings>
@@ -54,12 +62,15 @@ bool is_int(const string&);
 
 int main(int argc, char **argv) {
    vector<string> arguments(argc), options;
-   options = { KGEN, CREPES, ADJ_LISTS }; // expected number of arguments for each option
-   vector<int> optionc = { KGEC, CREPEC, ADJ_LISTC }; // expected number of arguments for each option
+
+   options = { KGEN, CREPES, ADJ_LISTS, GRAPH_HOMOL }; // expected number of arguments for each option
+   vector<int> optionc = { KGEC, CREPEC, ADJ_LISTC, GRAPH_HOMOLC }; // expected number of arguments for each option
+
+
    ifstream id_ptr;
    ofstream log_ptr;
-   log_ptr.open("Out/log.txt", ofstream::out);
 
+   log_ptr.open("Out/log.txt", ofstream::out);
    id_ptr.open(ID_FILE, ifstream::in);
    Matrix Id(id_ptr, 4);
 
@@ -371,16 +382,25 @@ int main(int argc, char **argv) {
                         }
                         flag=true;
                      }
-                  }
+                  } // END witnesses loop
                   if(flag) counter++;
-                  adj_lists.push_back(tmp);
-               }
-            }
+                  adj_lists.push_back(tmp); // adjacency of g_i p, g_j q
+               } // END g_j loop 
+            } // END g_i loop
             cout << endl;
-         }
+         } // END edge loop
          log(log_ptr, "Found", adj_lists.size(), "adjacency lists,", counter, "non-empty;", errcount, "with more than 1 element");
 
          
+         // Format:
+         // [number of edges]
+         //
+         // {number of edges times the following}
+         // [i] [number of elements witnessing the edge]
+         // [MATRIX]
+         //
+         // [EOF]
+         // Note: to recover between which vertices the edge is, use 
          log(log_ptr, "Writing adjacency lists to file", filename);
          write_ptr.open(filename, ofstream::out);
          write_ptr << counter << endl;
@@ -395,6 +415,21 @@ int main(int argc, char **argv) {
          }
          write_ptr.close();
          
+         return 0;
+      }
+      if(arguments[1] == GRAPH_HOMOL) { // graph_homology
+         log(log_ptr, "GRAPH HOMOLOGY");
+         if(arguments.size()-2 != GRAPH_HOMOLC) {
+            cout << "Unexpected arguments." << endl;
+            cout << "Usage: run " << GRAPH_HOMOLC << " [adjacency list file]" << endl;
+            cout << "Exiting" << endl;
+            exit(-1);
+         }
+         if(!is_int(arguments[2]) || stoi(arguments[2]) <= 0) {
+            cout << "Unexpected value for k. Exiting" << endl;
+            exit(-1);
+         }
+
          return 0;
       }
    }
