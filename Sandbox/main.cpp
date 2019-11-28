@@ -27,14 +27,16 @@
 #define COSET_REPS_FILE "Data/coset_reps_mod3.txt"
 #define OLD_ADJ_LISTS_FILE "../Data/HypMan.txt"
 
-#define KGEN "k_gen"
+#define KGEN "k_gen" // Generating coset representatives using k generators
 #define KGEC 1
-#define CREPES "coset_reps"
+#define CREPES "coset_reps" // ?
 #define CREPEC 2
-#define ADJ_LISTS "adj_lists"
+#define ADJ_LISTS "adj_lists" // Computing adjacency lists
 #define ADJ_LISTC 1
-#define GRAPH_HOMOL "graph_homology"
+#define GRAPH_HOMOL "graph_homology" // Computing the homology of a graph
 #define GRAPH_HOMOLC 1
+#define MAGMA_CONV "magma_conv" // Converting shitty magma matrix format into readable things
+#define MAGMA_CONC 2
 
 // helper functions to print
 // !!! WARNING !!! Do not put the following at the end of the file.
@@ -63,8 +65,10 @@ bool is_int(const string&);
 int main(int argc, char **argv) {
    vector<string> arguments(argc), options;
 
-   options = { KGEN, CREPES, ADJ_LISTS, GRAPH_HOMOL }; // expected number of arguments for each option
-   vector<int> optionc = { KGEC, CREPEC, ADJ_LISTC, GRAPH_HOMOLC }; // expected number of arguments for each option
+   // Option names
+   options = { KGEN, CREPES, ADJ_LISTS, GRAPH_HOMOL, MAGMA_CONV }; 
+   // expected number of arguments for each option
+   vector<int> optionc = { KGEC, CREPEC, ADJ_LISTC, GRAPH_HOMOLC, MAGMA_CONC }; 
 
 
    ifstream id_ptr;
@@ -85,7 +89,7 @@ int main(int argc, char **argv) {
          log(log_ptr, "K GEN");
          if(arguments.size()-2 != KGEC) {
             cout << "Unexpected arguments." << endl;
-            cout << "Usage: run " << KGEC << " [number of generators]" << endl;
+            cout << "Usage: run " << KGEN << " [number of generators]" << endl;
             cout << "Exiting" << endl;
             exit(-1);
          }
@@ -169,7 +173,7 @@ int main(int argc, char **argv) {
          log(log_ptr, "COSET REPRESENTATIVES");
          if(arguments.size()-2 != CREPEC) {
             cout << "Unexpected arguments." << endl;
-            cout << "Usage: run " << CREPEC << " [output file name] [expected number]" << endl;
+            cout << "Usage: run " << CREPES << " [output file name] [expected number]" << endl;
             cout << "Exiting" << endl;
             exit(-1);
          }
@@ -297,7 +301,7 @@ int main(int argc, char **argv) {
          log(log_ptr, "ADJACENCY LISTS");
          if(arguments.size()-2 != ADJ_LISTC) {
             cout << "Unexpected arguments." << endl;
-            cout << "Usage: run " << ADJ_LISTC << " [output file name]" << endl;
+            cout << "Usage: run " << ADJ_LISTS << " [output file name]" << endl;
             cout << "Exiting" << endl;
             exit(-1);
          }
@@ -432,7 +436,91 @@ int main(int argc, char **argv) {
 
          return 0;
       }
+//************************************************
+      if(arguments[1] == MAGMA_CONV) { // Convert shitty magma matrix file into readable input
+         log(log_ptr, "MAGMA ADJACENCY WITNESS CONVERSION");
+         if(arguments.size()-2 != MAGMA_CONC) {
+            cout << "Unexpected arguments." << endl;
+            cout << "Usage: run " << MAGMA_CONV << " [input file name] [output file name]" << endl;
+            cout << "Exiting" << endl;
+            exit(-1);
+         }
+
+// SETUP
+
+         string in_file = arguments[2];
+         string out_file = arguments[3];
+         log(log_ptr, "Converting the Magma format file", in_file, "to C++ readable format.");
+         log(log_ptr, "Output file:", out_file);
+
+
+         ifstream in_ptr;
+         ofstream out_ptr;
+         in_ptr.open(in_file, ifstream::in);
+         out_ptr.open(out_file, ofstream::out);
+         string buffer, token;
+         vector<pair<int,int> > edge_labels;
+         vector<vector<Matrix> > witnesses;
+
+         int point_no=12;
+         int matrix_cnt=0;
+         int edge_cnt=0;
+
+
+         for(int i=1; i<=point_no; i++) {
+            for(int j=1; j<=point_no; j++) {
+               edge_labels.push_back(makepair(i,j));
+            }
+         } 
+
+// COMPUTATIONS
+
+         while(getline(in_ptr, buffer)) {
+            // pos: start position of new token
+            // len: length of new token
+            // buff_len: length of line being parsed
+            // count: position in the matrix
+            // elabel: name of last edge label we've seen
+            int pos=0, len=0, buff_len=buffer.size(), count=0;
+            pair<int,int> elabel;
+
+            // DO SOMETHING WITH '[', ']' lines
+            if(buff_len <= 3) {
+               continue;
+            }
+
+            while(pos < buff_len) {
+               // Extract 1st token
+               len = buffer.find(" ", pos);
+
+               // If no match is found
+               if(len == string::npos)
+                  len = buffer.size()-pos;
+               else
+                  len = len - pos +1;
+               len = (len <= 0) ? 1 : len;
+               token = buffer.substr(pos, len-1);
+               pos += len;
+
+               // Remove commas at the end
+               if(token[token.size()-1] == ',') {
+                  token = token.substr(0, token.size()-1);
+               }
+
+               if(token[0] == '[' || token[0] == ']' || buffer.size() <9) {
+                  // Current line is not an edge label; ignore
+                  if(buffer.size() >= 9)
+                     continue;
+
+                  // Else extract edge label
+               }
+            }
+         }
+
+
+      }
    }
+
 
 
 //************************************************
