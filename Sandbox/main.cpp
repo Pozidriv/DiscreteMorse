@@ -475,6 +475,8 @@ int main(int argc, char **argv) {
 
 // COMPUTATIONS
 
+         magma_parser(in_ptr, "tmp_file.spe")
+
          while(getline(in_ptr, buffer)) {
             // pos: start position of new token
             // len: length of new token
@@ -486,6 +488,9 @@ int main(int argc, char **argv) {
 
             // DO SOMETHING WITH '[', ']' lines
             if(buff_len <= 3) {
+               token = buffer.substr(pos+1, len-2);
+
+               elabel.first 
                continue;
             }
 
