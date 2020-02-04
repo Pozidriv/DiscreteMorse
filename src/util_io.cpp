@@ -1,9 +1,9 @@
-#ifndef BITS
+#ifndef _BITS
 #include <bits/stdc++.h>
-#define BITS
+#define _BITS
 #endif
-#ifndef UTILIO
-#define UTILIO
+#ifndef _UTIL_IO
+#define _UTIL_IO
 #include "util_io.h"
 #endif
 

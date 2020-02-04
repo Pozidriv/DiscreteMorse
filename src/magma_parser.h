@@ -6,3 +6,10 @@
 #define _MATRIX
 #include "matrix.h"
 #endif
+#ifndef _GLOBAL
+#define _GLOBAL
+#include "global.h"
+#endif
+
+void readable_write(ofstream& out, vector<vector<Matrix>>& ret, vector<vector<int>>& elabel);
+void magma_4x4read(ifstream& in, vector<vector<Matrix>>& ret, vector<vector<int>>& elabel);

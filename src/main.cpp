@@ -2,6 +2,10 @@
 #define _BITS
 #include <bits/stdc++.h>
 #endif
+#ifndef _GLOBAL
+#define _GLOBAL
+#include "global.h"
+#endif
 #ifndef _UTIL_IO
 #define _UTIL_IO
 #include "util_io.h"
@@ -15,36 +19,6 @@
 #include "magma_parser.h"
 #endif
 
-#define OUT_DEFAULT "out/out.txt"
-
-// Useful data files
-#define ID_FILE "data/4x4Id.txt"
-#define OUT_FILE "out/quotient_elements.txt"
-#define COSET_REPS_FILE "data/coset_reps_mod3.txt"
-#define OLD_ADJ_LISTS_FILE "../data/HypMan.txt"
-
-// Options, option argument format
-#define O_DEF "default"
-#define O_TEST "test"
-
-// [] --> required argument
-// {} --> optional argument
-// X* --> multiple arguments
-// O for option, OC for option (arguments) count
-#define O_KGEN "k_blin_maker" // Generating coset representatives using k generators
-// run k_gen [number of generators]
-#define OC_KGEC 1
-#define O_CREPES "crepes" // Generating a minimal set of coset representatives
-// run coset_reps [output file name] [expected number]
-#define OC_CREPEC 2
-#define O_ADJ_LISTS "adj_liszt" // Computing new adjacency lists
-// run coset_reps [output file name]
-#define OC_ADJ_LISTC 1
-#define O_GRAPH_HOMOL "guacomology" // Computing the homology of a graph
-#define OC_GRAPH_HOMOLC 1
-#define O_MAGMA_CONV "magma_convexion" // Converting shitty magma matrix format into readable things
-// run magma_conv [input file name] {output file name}
-#define OC_MAGMA_CONC 2
 
 
 using namespace std;
@@ -55,12 +29,7 @@ void O_adj_lists(string, vector<string>);
 void O_graph_homol(string, vector<string>);
 void O_magma_conv(string, vector<string>);
 
-// Globals (put in a separate file?)
-ofstream g_log_ptr;
-ifstream g_id_ptr;
-Matrix g_Id;
 
-const string delimiter = "------------------------";
 
 
 int main(int argc, char *argv[]) {
@@ -71,7 +40,7 @@ int main(int argc, char *argv[]) {
    }
    cout << "========= Running Main =========" << endl;
 
-   vector<string> modes = { O_KGEN, O_CREPES, O_ADJ_LISTS, O_GRAPH_HOMOL, O_MAGMA_CONV };
+   vector<string> modes = { "default", O_KGEN, O_CREPES, O_ADJ_LISTS, O_GRAPH_HOMOL, O_MAGMA_CONV };
 
    string token, file, out;
    vector<string> arguments;
@@ -85,7 +54,12 @@ int main(int argc, char *argv[]) {
          narrator("Unrecognized option \"\"");
          cout << "Available options: [";
          for(int i=0;i<modes.size();i++) {
-            cout << modes[i] << (i==modes.size()-1)?"]":"|";
+            cout << modes[i];
+            if (i==modes.size()-1) {
+               cout << "]";
+            } else {
+               cout << "|";
+            }
          }
          cout << endl;
          return 0;
@@ -121,9 +95,20 @@ int main(int argc, char *argv[]) {
          arguments.push_back(token);
       }
    }
-   g_log_ptr.open("Out/log.txt", ofstream::out);
+   g_log_ptr.open(OUT_LOG, ofstream::out);
+   log("Globals\n", delimiter);
+   log("Default out file:", OUT_FILE);
+   log("Identity file:", ID_FILE);
+   log("Coset representatives file:", COSET_REPS_FILE);
+   log(delimiter);
+
    g_id_ptr.open(ID_FILE, ifstream::in);
+   g_Id.rows = 4;
+   g_Id.cols = 4;
+   g_Id.entries = vector<vector<long int> >(4, vector<long int>(4));
    g_Id = Matrix(g_id_ptr, 4);
+
+   log("Mode:", modes[mode]);
 
 
    // Ex
@@ -174,13 +159,37 @@ void O_graph_homol(string filename, vector<string> args) {
 void O_magma_conv(string filename, vector<string> args) {
    narrator("Magma Parser");
    narrator(delimiter);
-   
    if(args.size()==0) {
-      narrator("No outfile specified. Using default:", OUT_DEFAULT);
+      narrator("No file to convert specified");
+      exit(1);
+   } else {
+      filename = args[0];
+      if(args.size() < 2) {
+         narrator("No out file specified. Using default:", OUT_DEFAULT);
+      } else {
+         
+      }
    }
+   log("Input file:", filename);
+   string ofile_name = OUT_DEFAULT;
+   
 
+   ifstream ifile;
    ofstream ofile;
-   ofile.open(ofstream::in, OUT_DEFAULT);
+   ofile.open(ofile_name, ofstream::out);
+   ifile.open(filename, ifstream::in);
 
+   vector<vector<Matrix>> matrices;
+   vector<vector<int>> elabels;
+
+   debug("O_magma_conv", "Reading file");
+   magma_4x4read(ifile, matrices, elabels);
+   log("Finished reading file.");
+   log("Matrices:", matrices.size(), "| Elabels:", elabels.size());
+   cout << elabels.size() << endl;
+   readable_write(ofile, matrices, elabels);
+   log("Finished writing to file.");
+   ofile.close();
+   ifile.close();
    
 }

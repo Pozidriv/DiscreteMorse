@@ -11,8 +11,6 @@
 #include "2_gen.h"
 #endif
 
-#define ID_FILE "Data/4x4Id.txt"
-
 // generate_matrices: generates matrices in the full group (within a radius of the identity)
 // arguments:
 //    - A

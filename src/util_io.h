@@ -1,13 +1,13 @@
-#ifndef BITS
+#ifndef _BITS
 #include <bits/stdc++.h>
-#define BITS
+#define _BITS
 #endif
 
 // Add verboses as you want functions to shut up
 // Don't forget to modify the .inl file accordingly
 // Make sure you keep the precedence when you add new verboses
-#define VERBOSE 1
-#define MATRIX_VERBOSE 1
+const int VERBOSE = 1;
+const int MATRIX_VERBOSE = 1;
 
 using namespace std;
 

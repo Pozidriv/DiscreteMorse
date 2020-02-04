@@ -68,7 +68,9 @@ Matrix::Matrix(ifstream &str, int n) {
 
 Matrix& Matrix::operator=(const Matrix &B) {     
    if(B.rows!=rows || B.cols != cols) {
-      cout << "[Matrix:operator=] Matrix dimension mismatch. Exiting" << endl;
+      narrator(rows, cols);
+      narrator(B.rows, B.cols);
+      debug("Matrix:operator=", "Matrix dimension mismatch. Exiting");
       exit(-1);
    }
    for(int i=0; i<rows; i++) {
