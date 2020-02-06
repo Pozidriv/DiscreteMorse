@@ -2,10 +2,6 @@
 #define _BITS
 #include <bits/stdc++.h>
 #endif
-#ifndef _MATRIX
-#define _MATRIX
-#include "matrix.h"
-#endif
 #ifndef _2GEN
 #define _2GEN
 #include "2_gen.h"
@@ -40,9 +36,16 @@ string lowercase(string);
 // OPTIMIZATION: consider using a hash table to avoid O(n^2) runtime
 bool inList(Matrix A, vector<Matrix> &list);
 
+void two_gen(Matrix A, Matrix B, vector<Matrix> &quotient_elements, vector<string> &words, int expected_size) {
+   string wordA = "A", wordB = "B";
+
+   two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
+}
+
+// WordA, WordB need to be uppercase
 void two_gen(Matrix A, Matrix B, string wordA, string wordB, 
              vector<Matrix> &quotient_elements, vector<string> &words, int expected_size) {
-   cout << "[DEBUG:two_gen] Generating subgroup elements" << endl;
+   debug("two_gen", "Generating subgroup elements");
    if(quotient_elements.size() == 0) {
       cout << "[WARNING:two_gen] Quotient elements is empty. Potential mistake?" << endl;
    }

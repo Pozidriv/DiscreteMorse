@@ -308,7 +308,7 @@ int Matrix::det(void) {
 Matrix Matrix::mod3(void) {
    Matrix M(rows, cols);
    if(VERBOSE==1) {
-      cout << "[DEBUG:Matrix] Reducing matrix mod3" << endl;
+      debug("Matrix", "Reducing matrix mod3");
    }
 
    for(int i=0; i<rows; i++) {
@@ -323,7 +323,7 @@ Matrix Matrix::mod3(void) {
 // Output format: full rows of space separated entries; rows separated by newlines.
 void Matrix::print(ofstream &out_ptr) {
    if(VERBOSE==1) {
-      cout << "[DEBUG:Matrix] Printing matrix to file" << endl;
+      debug("Matrix", "Printing matrix to file");
    }
 
    for(int i=0; i<rows; i++) {

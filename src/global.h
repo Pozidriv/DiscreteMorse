@@ -9,7 +9,9 @@ extern const string OUT_LOG;
 extern const string ID_FILE;
 extern const string OUT_FILE;
 extern const string COSET_REPS_FILE;
-extern const string OLD_ADJ_LISTS_FILE;
+extern const string DATA_START;
+extern const string DATA_GENERATOR1;
+extern const string DATA_GENERATOR2;
 
 // Options, option argument format
 extern const string O_DEF;
@@ -35,8 +37,13 @@ extern const string O_MAGMA_CONV; // Converting shitty magma matrix format into 
 extern const int OC_MAGMA_CONC;
 
 // File pointers
-extern ofstream g_log_ptr;
+extern ofstream F_log;
+extern ifstream F_ifile;
+extern ofstream F_ofile;
 extern ifstream g_id_ptr;
 extern Matrix g_Id;
 
 extern const string delimiter;
+
+// Constant parameters
+extern int I_EXPECTED_REP_NO;

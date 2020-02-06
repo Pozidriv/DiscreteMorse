@@ -18,6 +18,10 @@
 #define _MAGMA_PARSER
 #include "magma_parser.h"
 #endif
+#ifndef _2_GEN
+#define _2_GEN
+#include "2_gen.h"
+#endif
 
 
 
@@ -95,7 +99,7 @@ int main(int argc, char *argv[]) {
          arguments.push_back(token);
       }
    }
-   g_log_ptr.open(OUT_LOG, ofstream::out);
+   F_log.open(OUT_LOG, ofstream::out);
    log("Globals\n", delimiter);
    log("Default out file:", OUT_FILE);
    log("Identity file:", ID_FILE);
@@ -147,16 +151,66 @@ int main(int argc, char *argv[]) {
 void O_kgen(string filename, vector<string> args) {
    narrator("Not yet implemented");
 }
+
+// { filename } { gen1_file } { gen_2_file }
 void O_crepes(string filename, vector<string> args) {
-   narrator("Not yet implemented");
+   string ofile_name = OUT_DEFAULT;
+
+   narrator("Generating Coset Representatives for a Subgroup");
+   narrator(delimiter);
+   narrator("Expecting", I_EXPECTED_REP_NO, "elements.");
+
+   ifstream gen1_ptr, gen2_ptr;
+   string gen1_file = DATA_GENERATOR1, gen2_file = DATA_GENERATOR2;
+
+   if(args.size()==0) {
+      narrator("No output file specified. Using default:", OUT_DEFAULT);
+   } else {
+      filename = args[0];
+   }
+   if(args.size() < 2) {
+      narrator("No generators specified. Using default:", DATA_GENERATOR1, ", ", DATA_GENERATOR2);
+      
+   }
+   F_ofile.open(ofile_name, ofstream::out);
+   F_ifile.open(filename, ifstream::in);
+
+   // Generators setup
+   gen1_ptr.open(gen1_file);
+   gen2_ptr.open(gen2_file);
+   Matrix gen1(gen1_ptr, 4), gen2(gen2_ptr, 4);
+
+   vector<Matrix> quotient_elements;
+   quotient_elements.push_back(g_Id);
+   vector<string> words;
+   words.push_back("");
+
+   // Perform a sanity check first?
+   two_gen(gen1, gen2, quotient_elements, words, I_EXPECTED_REP_NO);
+   
+   // Print results (keep track of matrices?)
+   F_ofile << quotient_elements.size() << endl;
+   for(int i=0; i<quotient_elements.size(); i++) {
+      F_ofile << words[i+1] << endl;
+      quotient_elements[i].print(F_ofile);
+   }
+
 }
 void O_adj_lists(string filename, vector<string> args) {
-   narrator("Not yet implemented");
+   string ofile_name = OUT_DEFAULT;
+
+   narrator("Computing Adjacency Lists for a Subgroup");
+
+
 }
 void O_graph_homol(string filename, vector<string> args) {
    narrator("Not yet implemented");
 }
+
+// filename { output_file }
 void O_magma_conv(string filename, vector<string> args) {
+   string ofile_name = OUT_DEFAULT;
+
    narrator("Magma Parser");
    narrator(delimiter);
    if(args.size()==0) {
@@ -167,29 +221,23 @@ void O_magma_conv(string filename, vector<string> args) {
       if(args.size() < 2) {
          narrator("No out file specified. Using default:", OUT_DEFAULT);
       } else {
-         
       }
    }
    log("Input file:", filename);
-   string ofile_name = OUT_DEFAULT;
-   
-
-   ifstream ifile;
-   ofstream ofile;
-   ofile.open(ofile_name, ofstream::out);
-   ifile.open(filename, ifstream::in);
+   F_ofile.open(ofile_name, ofstream::out);
+   F_ifile.open(filename, ifstream::in);
 
    vector<vector<Matrix>> matrices;
    vector<vector<int>> elabels;
 
    debug("O_magma_conv", "Reading file");
-   magma_4x4read(ifile, matrices, elabels);
+   magma_4x4read(F_ifile, matrices, elabels);
    log("Finished reading file.");
    log("Matrices:", matrices.size(), "| Elabels:", elabels.size());
    cout << elabels.size() << endl;
-   readable_write(ofile, matrices, elabels);
+   readable_write(F_ofile, matrices, elabels);
    log("Finished writing to file.");
-   ofile.close();
-   ifile.close();
+   F_ofile.close();
+   F_ifile.close();
    
 }

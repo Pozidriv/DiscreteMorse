@@ -7,6 +7,12 @@
 #include "global.h"
 #endif
 
+// Add verboses as you want functions to shut up
+// Don't forget to modify the .inl file accordingly
+// Make sure you keep the precedence when you add new verboses
+const int VERBOSE = 1;
+const int MATRIX_VERBOSE = 0;
+
 using namespace std;
 
 inline void narrator(void) {
@@ -20,12 +26,12 @@ inline void narrator(First arg, const Strings&... rest) {
 }
 
 inline void log(void) {
-   g_log_ptr << endl;
+   F_log << endl;
 }
 
 template<typename First, typename ... Strings>
 inline void log(First arg, const Strings&... rest) {
-   g_log_ptr << arg << " ";
+   F_log << arg << " ";
    log(rest...);
 }
 
@@ -33,8 +39,8 @@ template<typename First, typename ... Strings>
 inline void debug(First fnct, const Strings&... rest) {
    if(VERBOSE) {
       string token(fnct);
-      if(!(token.substr(0, 6) == "Matrix" || MATRIX_VERBOSE)) {
-      } else if(!(token.substr(0, 6) == "Matrix" || MATRIX_VERBOSE)) {
+      if(token.substr(0, 6) == "Matrix" && !MATRIX_VERBOSE) {
+      } else if(token.substr(0, 6) == "Matrix" && !MATRIX_VERBOSE) {
       } else {
          cout << "[DEBUG:" << fnct << "] ";
          narrator(rest...);
