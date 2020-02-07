@@ -38,14 +38,42 @@ bool inList(Matrix A, vector<Matrix> &list);
 
 // Facade function: computes the quotient elements and words making them.
 // Computes coset representatives and writes them in coset_reps
-void two_gen(Matrix A, Matrix B, vector<Matrix> &coset_reps, int expected_size) {
-   string wordA = "A", wordB = "B";
+void two_gen(vector<Matrix> &coset_reps, int expected_size) {
    vector<Matrix> quotient_elements;
    quotient_elements.push_back(g_Id);
    vector<string> words;
    words.push_back("");
 
-   two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
+   // Loop over available generators until the whole group mod3 is generated
+   int iter=1;
+   while(iter<=I_MAX_GEN && quotient_elements.size() < expected_size) {
+      // Setup
+      ifstream gen1_ptr, gen2_ptr;
+      gen1_ptr.open(DATA_GENERATORS[0], ifstream::in);
+      gen2_ptr.open(DATA_GENERATORS[iter], ifstream::in);
+      string wordA = "A", wordB; // the first generator is fixed I guess
+      char b = 65 + iter; // 65 is A
+      wordB.push_back(b);
+      Matrix A(gen1_ptr, 4), B(gen2_ptr, 4);
+      
+      // Computation
+      two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
+
+      // End step script
+      debug("two_gen", "Quotient elements:", quotient_elements.size());
+      iter++;
+      gen1_ptr.close();
+      gen2_ptr.close();
+   }
+
+   // Retrieve all generators
+   vector<Matrix> generators;
+   for(int i=0; i<I_MAX_GEN; i++) {
+      ifstream tmp;
+      tmp.open(DATA_GENERATORS[i], ifstream::in);
+      Matrix M(tmp, 4);
+      generators.push_back(M);
+   }
 
    // Generate the actual coset representatives
    for(int i=0; i<quotient_elements.size(); i++) {
@@ -56,16 +84,11 @@ void two_gen(Matrix A, Matrix B, vector<Matrix> &coset_reps, int expected_size) 
       for(int j=0; j<words[i].size(); j++) {
          string switch_char = words[i].substr(j, 1);
          Matrix switch_matrix(4);
-         if(switch_char == wordA) {
-            switch_matrix = A;
-         } else if(switch_char == wordB) {
-            switch_matrix = B;
-         } else if(switch_char == lowercase(wordA)) {
-            switch_matrix = A.inverse();
-         } else if(switch_char == lowercase(wordB)) {
-            switch_matrix = B.inverse();
-         } else {
-            narrator("two_gen: Error, unrecognized character in word :", switch_char);
+         char ting = switch_char.at(0);
+         if(switch_char == lowercase(switch_char)) { // lowercase -> inverse
+            switch_matrix = generators[ting - 97];
+         } else { // uppercase -> normal
+            switch_matrix = generators[ting - 65];
          }
          my_matrix = my_matrix * switch_matrix;
       }

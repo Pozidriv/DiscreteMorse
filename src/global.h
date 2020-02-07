@@ -8,10 +8,17 @@ extern const string OUT_LOG;
 // Useful data files
 extern const string ID_FILE;
 extern const string OUT_FILE;
-extern const string COSET_REPS_FILE;
+extern const string DATA_COSET_REPS;
 extern const string DATA_START;
 extern const string DATA_GENERATOR1;
 extern const string DATA_GENERATOR2;
+extern const string DATA_GENERATOR3;
+extern const string DATA_GENERATOR4;
+extern const string DATA_GENERATOR5;
+extern const string DATA_GENERATOR6;
+extern const string DATA_GENERATOR7;
+extern const string DATA_GENERATOR8;
+extern const string DATA_GENERATORS[8];
 
 // Options, option argument format
 extern const string O_DEF;
@@ -46,4 +53,5 @@ extern Matrix g_Id;
 extern const string delimiter;
 
 // Constant parameters
-extern int I_EXPECTED_REP_NO;
+extern int I_EXPECTED_REP_NO; // Expected nubmer of coset representatives (crepes)
+extern int I_MAX_GEN;         // Max number of generators to be used (crepes)

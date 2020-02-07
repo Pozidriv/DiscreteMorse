@@ -22,6 +22,10 @@
 #define _2_GEN
 #include "2_gen.h"
 #endif
+#ifndef _ADJACENCY_LISTS
+#define _ADJACENCY_LISTS
+#include "adjacency_lists.h"
+#endif
 
 
 
@@ -103,7 +107,7 @@ int main(int argc, char *argv[]) {
    log("Globals\n", delimiter);
    log("Default out file:", OUT_FILE);
    log("Identity file:", ID_FILE);
-   log("Coset representatives file:", COSET_REPS_FILE);
+   log("Coset representatives file:", DATA_COSET_REPS);
    log(delimiter);
 
    g_id_ptr.open(ID_FILE, ifstream::in);
@@ -154,51 +158,54 @@ void O_kgen(string filename, vector<string> args) {
 
 // { filename } { gen1_file } { gen_2_file }
 void O_crepes(string filename, vector<string> args) {
-   string ofile_name = OUT_DEFAULT;
-
    narrator("Generating Coset Representatives for a Subgroup");
    narrator(delimiter);
    narrator("Expecting", I_EXPECTED_REP_NO, "elements.");
 
-   ifstream gen1_ptr, gen2_ptr;
-   string gen1_file = DATA_GENERATOR1, gen2_file = DATA_GENERATOR2;
-
+   string ofile_name = OUT_DEFAULT;
    if(args.size()==0) {
       narrator("No output file specified. Using default:", OUT_DEFAULT);
    } else {
       filename = args[0];
    }
    if(args.size() < 2) {
-      narrator("No generators specified. Using default:", DATA_GENERATOR1, ", ", DATA_GENERATOR2);
-      
+      narrator("Using default generators");
    }
    F_ofile.open(ofile_name, ofstream::out);
    F_ifile.open(filename, ifstream::in);
 
-   // Generators setup
-   gen1_ptr.open(gen1_file);
-   gen2_ptr.open(gen2_file);
-   Matrix gen1(gen1_ptr, 4), gen2(gen2_ptr, 4);
-
+   // Setup
    vector<Matrix> coset_representatives;
 
-   // Perform a sanity check first?
-   two_gen(gen1, gen2, coset_representatives, I_EXPECTED_REP_NO);
+   two_gen(coset_representatives, I_EXPECTED_REP_NO);
    
    // Print results (keep track of matrices?)
+   narrator("Printing coset representatives to file.");
    F_ofile << coset_representatives.size() << endl;
    for(int i=0; i<coset_representatives.size(); i++) {
       F_ofile << endl;
       coset_representatives[i].print(F_ofile);
    }
-
 }
 void O_adj_lists(string filename, vector<string> args) {
    string ofile_name = OUT_DEFAULT;
 
    narrator("Computing Adjacency Lists for a Subgroup");
+   narrator(delimiter);
+   if(args.size()==0) {
+      narrator("No out file specified. Using default:", OUT_DEFAULT);
+   } else {
+      ofile_name = args[0];
+   }
+   log("Input file:", filename);
+   F_ofile.open(ofile_name, ofstream::out);
+   F_ifile.open(filename, ifstream::in);
 
-
+   // Setup coset representatives and old adjacency lists files
+   ifstream cr_ptr, oal_ptr;
+   cr_ptr.open(DATA_COSET_REPS);
+   oal_ptr.open(DATA_START);
+   compute_adjacency_lists(cr_ptr, oal_ptr);
 }
 void O_graph_homol(string filename, vector<string> args) {
    narrator("Not yet implemented");
@@ -236,5 +243,4 @@ void O_magma_conv(string filename, vector<string> args) {
    log("Finished writing to file.");
    F_ofile.close();
    F_ifile.close();
-   
 }

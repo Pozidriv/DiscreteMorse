@@ -28,12 +28,22 @@ const string ID_FILE = "data/4x4Id.txt";
 // obsolete?
 const string OUT_FILE = "out/quotient_elements.txt"; 
 // coset representatives of subgroup H := { M | M = Id (mod 3) }
-const string COSET_REPS_FILE = "data/coset_reps_mod3.txt"; 
+const string DATA_COSET_REPS = "data/coset_reps_mod3.txt"; 
 // starting data (generators?) of G := O(Q) for Q = x^2 + y^2 + z^2 - 7t^2
 const string DATA_START = "../data/starting_data.txt";
 // Default elements to generate the quotient G/H as described above (generating coset representatives, O_crepes)
 const string DATA_GENERATOR1 = "data/gen1.txt";
 const string DATA_GENERATOR2 = "data/gen2.txt";
+const string DATA_GENERATOR3 = "data/gen3.txt";
+const string DATA_GENERATOR4 = "data/gen4.txt";
+const string DATA_GENERATOR5 = "data/gen5.txt";
+const string DATA_GENERATOR6 = "data/gen6.txt";
+const string DATA_GENERATOR7 = "data/gen7.txt";
+const string DATA_GENERATOR8 = "data/gen8.txt";
+const string DATA_GENERATORS[8] = { 
+   DATA_GENERATOR1, DATA_GENERATOR2, DATA_GENERATOR3, DATA_GENERATOR4,
+   DATA_GENERATOR5, DATA_GENERATOR6, DATA_GENERATOR7, DATA_GENERATOR8
+};
 
 // Options, option argument format
 //-----------------------------------------------------------------
@@ -82,3 +92,4 @@ const string delimiter = "------------------------";
 //-----------------------------------------------------------------
 // Expected number of coset representatives to compute (coset_representatives)
 int I_EXPECTED_REP_NO = 720;
+int I_MAX_GEN = 8;
