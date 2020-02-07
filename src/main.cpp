@@ -180,19 +180,16 @@ void O_crepes(string filename, vector<string> args) {
    gen2_ptr.open(gen2_file);
    Matrix gen1(gen1_ptr, 4), gen2(gen2_ptr, 4);
 
-   vector<Matrix> quotient_elements;
-   quotient_elements.push_back(g_Id);
-   vector<string> words;
-   words.push_back("");
+   vector<Matrix> coset_representatives;
 
    // Perform a sanity check first?
-   two_gen(gen1, gen2, quotient_elements, words, I_EXPECTED_REP_NO);
+   two_gen(gen1, gen2, coset_representatives, I_EXPECTED_REP_NO);
    
    // Print results (keep track of matrices?)
-   F_ofile << quotient_elements.size() << endl;
-   for(int i=0; i<quotient_elements.size(); i++) {
-      F_ofile << words[i+1] << endl;
-      quotient_elements[i].print(F_ofile);
+   F_ofile << coset_representatives.size() << endl;
+   for(int i=0; i<coset_representatives.size(); i++) {
+      F_ofile << endl;
+      coset_representatives[i].print(F_ofile);
    }
 
 }

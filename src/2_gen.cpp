@@ -36,10 +36,41 @@ string lowercase(string);
 // OPTIMIZATION: consider using a hash table to avoid O(n^2) runtime
 bool inList(Matrix A, vector<Matrix> &list);
 
-void two_gen(Matrix A, Matrix B, vector<Matrix> &quotient_elements, vector<string> &words, int expected_size) {
+// Facade function: computes the quotient elements and words making them.
+// Computes coset representatives and writes them in coset_reps
+void two_gen(Matrix A, Matrix B, vector<Matrix> &coset_reps, int expected_size) {
    string wordA = "A", wordB = "B";
+   vector<Matrix> quotient_elements;
+   quotient_elements.push_back(g_Id);
+   vector<string> words;
+   words.push_back("");
 
    two_gen(A, B, wordA, wordB, quotient_elements, words, expected_size);
+
+   // Generate the actual coset representatives
+   for(int i=0; i<quotient_elements.size(); i++) {
+      Matrix my_matrix(4);
+      my_matrix = g_Id;
+      
+      // Iteratively multiply by elements described by the word
+      for(int j=0; j<words[i].size(); j++) {
+         string switch_char = words[i].substr(j, 1);
+         Matrix switch_matrix(4);
+         if(switch_char == wordA) {
+            switch_matrix = A;
+         } else if(switch_char == wordB) {
+            switch_matrix = B;
+         } else if(switch_char == lowercase(wordA)) {
+            switch_matrix = A.inverse();
+         } else if(switch_char == lowercase(wordB)) {
+            switch_matrix = B.inverse();
+         } else {
+            narrator("two_gen: Error, unrecognized character in word :", switch_char);
+         }
+         my_matrix = my_matrix * switch_matrix;
+      }
+      coset_reps.push_back(my_matrix);
+   }
 }
 
 // WordA, WordB need to be uppercase
