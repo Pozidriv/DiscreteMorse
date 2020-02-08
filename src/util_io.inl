@@ -12,6 +12,8 @@
 // Make sure you keep the precedence when you add new verboses
 const int VERBOSE = 1;
 const int MATRIX_VERBOSE = 0;
+const int TWO_GEN_VERBOSE = 0;
+const int TWO_GEN_INLINE_VERBOSE = 0;
 
 using namespace std;
 
@@ -40,7 +42,8 @@ inline void debug(First fnct, const Strings&... rest) {
    if(VERBOSE) {
       string token(fnct);
       if(token.substr(0, 6) == "Matrix" && !MATRIX_VERBOSE) {
-      } else if(token.substr(0, 6) == "Matrix" && !MATRIX_VERBOSE) {
+      } else if(token.substr(0, 7) == "two_gen" && !TWO_GEN_VERBOSE) {
+      } else if(token.substr(0, 14) == "two_gen|inList" && !TWO_GEN_INLINE_VERBOSE) {
       } else {
          cout << "[DEBUG:" << fnct << "] ";
          narrator(rest...);

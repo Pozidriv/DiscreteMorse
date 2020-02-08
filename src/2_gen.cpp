@@ -66,6 +66,8 @@ void two_gen(vector<Matrix> &coset_reps, int expected_size) {
       gen2_ptr.close();
    }
 
+   // Check for duplicates
+
    // Retrieve all generators
    vector<Matrix> generators;
    for(int i=0; i<I_MAX_GEN; i++) {
@@ -85,12 +87,26 @@ void two_gen(vector<Matrix> &coset_reps, int expected_size) {
          string switch_char = words[i].substr(j, 1);
          Matrix switch_matrix(4);
          char ting = switch_char.at(0);
+         debug("two_gen","char", ting);
          if(switch_char == lowercase(switch_char)) { // lowercase -> inverse
-            switch_matrix = generators[ting - 97];
+            switch_matrix = generators[ting - 97].inverse();
+            debug("two_gen","lowercase");
          } else { // uppercase -> normal
             switch_matrix = generators[ting - 65];
+            debug("two_gen","uppercase");
          }
          my_matrix = my_matrix * switch_matrix;
+         debug("two_gen","Switch:");
+         //switch_matrix.print();
+         debug("two_gen","Matrix:");
+         //my_matrix.print();
+      }
+      // Check the matrix does indeed reduce to what it should mod 3.
+      if(!(my_matrix.mod3() == quotient_elements[i])) {
+         cout << "Houston, we've got a problem..." << endl;
+         my_matrix.mod3().print();
+         cout << "Expected" << endl;
+         quotient_elements[i].print();
       }
       coset_reps.push_back(my_matrix);
    }
@@ -100,6 +116,8 @@ void two_gen(vector<Matrix> &coset_reps, int expected_size) {
 void two_gen(Matrix A, Matrix B, string wordA, string wordB, 
              vector<Matrix> &quotient_elements, vector<string> &words, int expected_size) {
    debug("two_gen", "Generating subgroup elements");
+   A.print();
+   B.print();
    if(quotient_elements.size() == 0) {
       cout << "[WARNING:two_gen] Quotient elements is empty. Potential mistake?" << endl;
    }
@@ -130,7 +148,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
    //cout << "[DEBUG:generate_matrices] Running for " << radius << " steps" << endl;
 //    - current current step number
 //    - index ignore entries before this integer, they have been expanded already
-   int current=0, index=0, tmp=0, size=1;
+   int index=0, tmp=0, size=1;
 
    for(int i=0; i<radius; i++) {
 /*
@@ -139,12 +157,13 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
       cout << "[DEBUG:generate_matrices] Starting index: " << index << endl;
 */      
       if(elements.size() == index) {
-         cout << "[DEBUG:generate_matrices] We're done. Exiting" << endl;
+         debug("generate_matrices", "We're done. Exiting");
          return;
       }
       size = elements.size(); // elements.size() will change
       for(int j=index; j<size; j++) {
          //cout << "[DEBUG:generate_matrices] Computing elements to add to list" << endl;
+         debug("generate_matrices", "Lvl", i, "| no:", elements.size());
          Matrix TA(4), TB(4), Ta(4), Tb(4), zero(4);
 
          TA = elements[j] * A;
@@ -190,7 +209,7 @@ void generate_matrices(Matrix &A, Matrix &B, Matrix &a, Matrix &b,
 bool inList(Matrix A, vector<Matrix> &list) {
    for(int i=list.size()-1; i>-1; i--) {
       if(A == list[i]) {
-         //cout << "[DEBUG:inList] Found element, index " << i << endl;
+         debug("two_gen|inList", "Found elt, index", i);
 //         cout << i << " ";
          return true;
       }

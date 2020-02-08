@@ -30,7 +30,7 @@ const string OUT_FILE = "out/quotient_elements.txt";
 // coset representatives of subgroup H := { M | M = Id (mod 3) }
 const string DATA_COSET_REPS = "data/coset_reps_mod3.txt"; 
 // starting data (generators?) of G := O(Q) for Q = x^2 + y^2 + z^2 - 7t^2
-const string DATA_START = "../data/starting_data.txt";
+const string DATA_START = "data/starting_data.txt";
 // Default elements to generate the quotient G/H as described above (generating coset representatives, O_crepes)
 const string DATA_GENERATOR1 = "data/gen1.txt";
 const string DATA_GENERATOR2 = "data/gen2.txt";

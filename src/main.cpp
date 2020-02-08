@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
    log("Default out file:", OUT_FILE);
    log("Identity file:", ID_FILE);
    log("Coset representatives file:", DATA_COSET_REPS);
+   log("Starting adjacency lists file:", DATA_START);
    log(delimiter);
 
    g_id_ptr.open(ID_FILE, ifstream::in);
@@ -187,6 +188,9 @@ void O_crepes(string filename, vector<string> args) {
       coset_representatives[i].print(F_ofile);
    }
 }
+
+// Input file: old adjacency lists L_{p,q}
+// Output file: new adjacency lists L_{g_i p, g_j q}
 void O_adj_lists(string filename, vector<string> args) {
    string ofile_name = OUT_DEFAULT;
 
@@ -197,15 +201,15 @@ void O_adj_lists(string filename, vector<string> args) {
    } else {
       ofile_name = args[0];
    }
-   log("Input file:", filename);
    F_ofile.open(ofile_name, ofstream::out);
-   F_ifile.open(filename, ifstream::in);
 
    // Setup coset representatives and old adjacency lists files
    ifstream cr_ptr, oal_ptr;
    cr_ptr.open(DATA_COSET_REPS);
    oal_ptr.open(DATA_START);
-   compute_adjacency_lists(cr_ptr, oal_ptr);
+   compute_adjacency_lists(cr_ptr, oal_ptr); // OPTIMIZATION: compute this in parallel
+
+   F_ofile.close();
 }
 void O_graph_homol(string filename, vector<string> args) {
    narrator("Not yet implemented");

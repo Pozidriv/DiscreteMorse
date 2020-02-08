@@ -336,9 +336,7 @@ void Matrix::print(ofstream &out_ptr) {
 // Print to stdout 
 // Output format: full rows of space separated entries; rows separated by newlines.
 void Matrix::print() {
-   if(VERBOSE==1) {
-      cout << "[DEBUG:Matrix] Printing matrix to file" << endl;
-   }
+   debug("Matrix", "Printing matrix to file");
 
    for(int i=0; i<rows; i++) {
       for(int j=0; j<cols; j++) {
