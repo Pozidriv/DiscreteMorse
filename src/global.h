@@ -4,6 +4,7 @@
 #endif
 extern const string OUT_DEFAULT;
 extern const string OUT_LOG;
+extern const string OUT_ADJ_LIST_THREAD;
 
 // Useful data files
 extern const string ID_FILE;

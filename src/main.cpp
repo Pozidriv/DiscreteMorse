@@ -207,7 +207,8 @@ void O_adj_lists(string filename, vector<string> args) {
    ifstream cr_ptr, oal_ptr;
    cr_ptr.open(DATA_COSET_REPS);
    oal_ptr.open(DATA_START);
-   compute_adjacency_lists(cr_ptr, oal_ptr); // OPTIMIZATION: compute this in parallel
+   //compute_adjacency_lists(cr_ptr, oal_ptr); // OPTIMIZATION: compute this in parallel
+   par_CAL(cr_ptr, oal_ptr);
 
    F_ofile.close();
 }

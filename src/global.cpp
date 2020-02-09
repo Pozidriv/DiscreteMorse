@@ -20,6 +20,8 @@ using namespace std;
 const string OUT_DEFAULT = "out/out.txt";
 // Default log file (runtime log, sanity checks, errors, etc...)
 const string OUT_LOG = "out/log.txt";
+// Header for the thread files (adjacency computations)
+const string OUT_ADJ_LIST_THREAD = "out/thread";
 
 // Useful data files
 //-----------------------------------------------------------------
