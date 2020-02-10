@@ -26,15 +26,21 @@
 #define _ADJACENCY_LISTS
 #include "adjacency_lists.h"
 #endif
+#ifndef _INVARIANTS
+#define _INVARIANTS
+#include "invariants.h"
+#endif
 
 
 
 using namespace std;
 
+void O_default(string, vector<string>);
 void O_kgen(string, vector<string>);
 void O_crepes(string, vector<string>);
 void O_adj_lists(string, vector<string>);
 void O_graph_homol(string, vector<string>);
+void O_invariants(string, vector<string>);
 void O_magma_conv(string, vector<string>);
 
 
@@ -123,7 +129,8 @@ int main(int argc, char *argv[]) {
    // Ex
    switch(mode) {
       case 0 : // M_DEF
-               narrator("No default implemented");
+               narrator("Default option");
+               O_default(file, arguments);
                break;
       case 1 : // 
                narrator("Option: k_gen");
@@ -146,11 +153,30 @@ int main(int argc, char *argv[]) {
                O_magma_conv(file, arguments);
                break;
       default: 
-               narrator("No default implemented");
+               narrator("Default option");
+               O_default(file, arguments);
                break;
    }
 
    return 0;
+}
+
+// Essentially a script option
+void O_default(string filename, vector<string> args) {
+   narrator("Computing the number of edges in", DATA_START);
+   F_ifile.open(DATA_START, ifstream::in);
+
+   int n=0, count=0, garbage, no_witnesses;
+   F_ifile >> n;
+   for(int i=0; i<n; i++) {
+      F_ifile >> garbage >> garbage >> no_witnesses;
+      count += no_witnesses;
+      for(int j=0; j<no_witnesses; j++) {
+         Matrix more_garbage(F_ifile, 4);
+      }
+   }
+   narrator("Counted", count, "edges");
+   F_ifile.close();
 }
 
 void O_kgen(string filename, vector<string> args) {
@@ -212,7 +238,12 @@ void O_adj_lists(string filename, vector<string> args) {
 
    F_ofile.close();
 }
+
 void O_graph_homol(string filename, vector<string> args) {
+   narrator("Not yet implemented");
+}
+
+void O_invariants(string filename, vector<string> args) {
    narrator("Not yet implemented");
 }
 
