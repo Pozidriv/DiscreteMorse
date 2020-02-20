@@ -21,5 +21,11 @@ magma_parser.o : magma_parser.h magma_parser.cpp matrix.o util_io.o
 adjacency_lists.o : adjacency_lists.h adjacency_lists.cpp matrix.o global.o
 	$(GCC) -c adjacency_lists.cpp
 
+invariants.o : invariants.h graph.o
+	$(GCC) -c adjacency_lists.cpp
+
+graph.o : graph.h graph.cpp
+	$(GCC) -c graph.cpp
+
 clean : 
 	rm *.o *.out
