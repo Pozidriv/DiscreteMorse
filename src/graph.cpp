@@ -6,20 +6,19 @@ using namespace std;
 
 template<>
 Node<int>::Node(int i) 
-   : neighbors(vector<Node<T>&>())
-   , edge_ptrs(vector<int>())
+   : edge_ptrs(vector<int>())
    , value(i)
 { }
 
-template<>
-vector<Node<int>>& Node<int>::graph_from_edges(int n, vector<vector<int>> elabels) {
-   vector<Node<int>> ret(*(new vector<Node<int>>()));
+void graph_from_edges(int n, vector<vector<int>>& elabels, vector<Node<int>>& graph) {
+   debug("graph_from_edges", "n", n);
    for(int i=0; i<n; i++) { // Adding vertices
-      ret.pushback(Node(i));
+      graph.push_back(Node<int>(i));
    }
+   debug("graph_from_edges", "Finished making the graph");
    for(int i=0; i<elabels.size(); i++) {  // Adding edges
-      ret[elabels[0]].edge_ptrs.push_back(elabels[1]);
-      ret[elabels[1]].edge_ptrs.push_back(elabels[0]);
+      //debug("graph_from_edges", i, n, "| pair", elabels[i][0], elabels[i][1]);
+      graph[elabels[i][0]].edge_ptrs.push_back(elabels[i][1]);
+      graph[elabels[i][1]].edge_ptrs.push_back(elabels[i][0]);
    }
-   return ret;
 }

@@ -1,7 +1,7 @@
 GCC = g++ -std=c++11
 
-run : main.cpp util_io.o 2_gen.o matrix.o global.o magma_parser.o adjacency_lists.o
-	$(GCC) -o run.out main.cpp util_io.o 2_gen.o matrix.o global.o magma_parser.o adjacency_lists.o
+run : main.cpp util_io.o 2_gen.o matrix.o global.o magma_parser.o adjacency_lists.o invariants.o
+	$(GCC) -o run.out main.cpp util_io.o 2_gen.o matrix.o global.o magma_parser.o adjacency_lists.o invariants.o graph.o
 
 util_io.o : util_io.h util_io.cpp util_io.inl
 	$(GCC) -c util_io.cpp
@@ -22,7 +22,7 @@ adjacency_lists.o : adjacency_lists.h adjacency_lists.cpp matrix.o global.o
 	$(GCC) -c adjacency_lists.cpp
 
 invariants.o : invariants.h graph.o
-	$(GCC) -c adjacency_lists.cpp
+	$(GCC) -c invariants.cpp
 
 graph.o : graph.h graph.cpp
 	$(GCC) -c graph.cpp

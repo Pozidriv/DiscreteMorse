@@ -5,16 +5,20 @@
 #define _BITS
 #include <bits/stdc++.h>
 #endif
+#ifndef _UTIL_IO
+#define _UTIL_IO
+#include "util_io.h"
+#endif
 using namespace std;
 
 template<class T> 
 class Node {
    public:
-      vector<Node<T>&> neighbors;
       vector<int> edge_ptrs;     // Pointer to edge elements (living in a global array)
       T value;
 
       // CONSTRUCTORS
+      Node(int i);
 
       // METHODS
       // Implement tree traversals
@@ -31,5 +35,4 @@ class Graph {
 };
 
 
-template<>
-vector<Node<int>>& Node<int>::graph_from_edges(int n, vector<vector<int>> elabels);
+void graph_from_edges(int n, vector<vector<int>>& elabels, vector<Node<int>>& graph);
