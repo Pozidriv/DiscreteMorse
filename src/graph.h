@@ -20,6 +20,16 @@ class Node {
       // Implement tree traversals
 };
 
+template<class T> 
+class Graph {
+   public:
+      vector<Node<T>&> vertices;
+      // CONSTRUCTORS
+
+      // METHODS
+      // Implement tree traversals
+};
+
 
 template<>
 vector<Node<int>>& Node<int>::graph_from_edges(int n, vector<vector<int>> elabels);

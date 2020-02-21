@@ -10,6 +10,10 @@
 #define _MATRIX
 #include "matrix.h"
 #endif
+#ifndef _GRAPH
+#define _GRAPH
+#include "graph.h"
+#endif
 
 int count_triangles();
 
