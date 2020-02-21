@@ -11,6 +11,7 @@ extern const string ID_FILE;
 extern const string OUT_FILE;
 extern const string DATA_COSET_REPS;
 extern const string DATA_START;
+extern const string DATA_ADJ_LISTS_MOD3;
 extern const string DATA_GENERATOR1;
 extern const string DATA_GENERATOR2;
 extern const string DATA_GENERATOR3;
@@ -43,6 +44,7 @@ extern const int OC_GRAPH_HOMOLC;
 extern const string O_MAGMA_CONV; // Converting shitty magma matrix format into readable things
 // run magma_conv [input file name] {output file name}
 extern const int OC_MAGMA_CONC;
+extern const string O_INVARIANTS; // 
 
 // File pointers
 extern ofstream F_log;

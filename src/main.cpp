@@ -30,6 +30,10 @@
 #define _INVARIANTS
 #include "invariants.h"
 #endif
+#ifndef _GRAPH
+#define _GRAPH
+#include "graph.h"
+#endif
 
 
 
@@ -54,7 +58,8 @@ int main(int argc, char *argv[]) {
    }
    cout << "========= Running Main =========" << endl;
 
-   vector<string> modes = { "default", O_KGEN, O_CREPES, O_ADJ_LISTS, O_GRAPH_HOMOL, O_MAGMA_CONV };
+   vector<string> modes = { "default", O_KGEN, O_CREPES, O_ADJ_LISTS, 
+                            O_GRAPH_HOMOL, O_MAGMA_CONV, O_INVARIANTS };
 
    string token, file, out;
    vector<string> arguments;
@@ -152,6 +157,10 @@ int main(int argc, char *argv[]) {
                narrator("Option: magma_conv");
                O_magma_conv(file, arguments);
                break;
+      case 6 : // 
+               narrator("Option: invariants");
+               O_invariants(file, arguments);
+               break;
       default: 
                narrator("Default option");
                O_default(file, arguments);
@@ -243,8 +252,44 @@ void O_graph_homol(string filename, vector<string> args) {
    narrator("Not yet implemented");
 }
 
+// no arguments?
 void O_invariants(string filename, vector<string> args) {
-   narrator("Not yet implemented");
+   string ofile_name = OUT_DEFAULT;
+
+   narrator("Computing invariants of a graph");
+   narrator(delimiter);
+   log("Input file:", DATA_ADJ_LISTS_MOD3);
+   F_ofile.open(ofile_name, ofstream::out);
+   F_ifile.open(DATA_ADJ_LISTS_MOD3, ifstream::in);
+
+   // Things to compute:
+   // - number of triangles
+   // - median vertex degree
+
+   vector<vector<int>> elabels;
+// ======================================================!!!!!!! FIX THIS CONSTANT 
+   int n=I_EXPECTED_REP_NO*12, edge_no;              // n is the number of vertices, edge_no nubmer of edges
+
+   F_ifile >> edge_no;
+   for(int i=0; i<edge_no; i++) {
+      int garbage, rep1, rep2, a, b;   // rep1,rep2: coset representatives, a,b: original points
+
+      F_ifile >> garbage >> garbage >> rep1 >> rep2 >> a >> b;
+      Matrix junk(F_ifile, 4);         // Discard the matrix
+      
+      //narrator("a", a, "| b", b);
+      int v1=(a-1)*I_EXPECTED_REP_NO+rep1, v2=(b-1)*I_EXPECTED_REP_NO+rep1;
+      elabels.push_back(vector<int>({v1, v2}));
+   }
+   narrator("Finished reading edge labels", elabels.size());
+
+   vector<Node<int>> my_graph;
+   graph_from_edges(n, elabels, my_graph);
+   narrator("Finished reconstructing the graph");
+   int triangle_no = count_triangles(my_graph);
+   
+   narrator("Counted", triangle_no, "triangles");
+   log("Counted", triangle_no, "triangles");
 }
 
 // filename { output_file }
