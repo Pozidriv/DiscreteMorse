@@ -277,22 +277,31 @@ void O_invariants(string filename, vector<string> args) {
       F_ifile >> garbage >> garbage >> rep1 >> rep2 >> a >> b;
       Matrix junk(F_ifile, 4);         // Discard the matrix
       
-      //narrator("a", a, "| b", b);
-      int v1=(a-1)*I_EXPECTED_REP_NO+rep1, v2=(b-1)*I_EXPECTED_REP_NO+rep1;
+      int v1=(a-1)*I_EXPECTED_REP_NO+rep1, v2=(b-1)*I_EXPECTED_REP_NO+rep2;
+      //narrator(rep1, rep2, a, b, "|", v1, v2);
       elabels.push_back(vector<int>({v1, v2}));
    }
    narrator("Finished reading edge labels", elabels.size());
 
+   F_ofile << "Edge labels" << endl;
+/*
+   for(int i=0; i<elabels.size(); i++) {
+      F_ofile << elabels[i][0] << " " << elabels[i][1] << endl;
+   }
+   F_ofile << delimiter;
+*/
    vector<Node<int>> my_graph;
    graph_from_edges(n, elabels, my_graph);
    narrator("Finished reconstructing the graph");
    print(F_ofile, my_graph);
    F_ofile.close();
    narrator("Printed graph to file.");
-   //int triangle_no = count_triangles(my_graph);
+/*
+   int triangle_no = count_triangles(my_graph);
    
-   //narrator("Counted", triangle_no, "triangles");
-   //log("Counted", triangle_no, "triangles");
+   narrator("Counted", triangle_no, "triangles");
+   log("Counted", triangle_no, "triangles");
+*/
 }
 
 // filename { output_file }

@@ -14,9 +14,11 @@ int count_triangles(vector<Node<int>> G) {
       int vertexc=0;
       for(int j=0; j<a.edge_ptrs.size(); j++) {
          Node<int> b = G[a.edge_ptrs[j]];
+         if(a.edge_ptrs[j] == i) continue;
          for(int k=0; k<b.edge_ptrs.size(); k++) {
             triples++;
             Node<int> c = G[b.edge_ptrs[k]];
+            if(b.edge_ptrs[k] == j) continue;
             for(int l=0; l<c.edge_ptrs.size(); l++) {
                if(i == c.edge_ptrs[l]) {
                   count++;
