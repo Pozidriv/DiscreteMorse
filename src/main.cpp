@@ -286,10 +286,13 @@ void O_invariants(string filename, vector<string> args) {
    vector<Node<int>> my_graph;
    graph_from_edges(n, elabels, my_graph);
    narrator("Finished reconstructing the graph");
-   int triangle_no = count_triangles(my_graph);
+   print(F_ofile, my_graph);
+   F_ofile.close();
+   narrator("Printed graph to file.");
+   //int triangle_no = count_triangles(my_graph);
    
-   narrator("Counted", triangle_no, "triangles");
-   log("Counted", triangle_no, "triangles");
+   //narrator("Counted", triangle_no, "triangles");
+   //log("Counted", triangle_no, "triangles");
 }
 
 // filename { output_file }

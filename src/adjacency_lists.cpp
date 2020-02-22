@@ -95,7 +95,7 @@ void compute_adjacency_lists(ifstream& cr_ptr, ifstream& oal_ptr) {
    for(int i=0; i<new_adj_lists.size(); i++) {
       // Ignore empty lists
       if(new_adj_lists[i].size() == 0) continue;
-      // Print header (i, rep1, rep2, a, b)
+      // Print header (i, size, rep1, rep2, a, b)
       F_ofile << i << " " 
               << new_adj_lists[i].size() << " "
               << new_elabels[i][0] << " "

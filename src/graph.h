@@ -32,3 +32,4 @@ class Graph {
 
 
 void graph_from_edges(int n, vector<vector<int>>& elabels, vector<Node<int>>& graph);
+void print(ostream& out, vector<Node<int>>& graph);
