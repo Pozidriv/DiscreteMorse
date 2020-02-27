@@ -283,8 +283,8 @@ void O_invariants(string filename, vector<string> args) {
    }
    narrator("Finished reading edge labels", elabels.size());
 
-   F_ofile << "Edge labels" << endl;
 /*
+   F_ofile << "Edge labels" << endl;
    for(int i=0; i<elabels.size(); i++) {
       F_ofile << elabels[i][0] << " " << elabels[i][1] << endl;
    }
@@ -296,12 +296,10 @@ void O_invariants(string filename, vector<string> args) {
    print(F_ofile, my_graph);
    F_ofile.close();
    narrator("Printed graph to file.");
-/*
    int triangle_no = count_triangles(my_graph);
    
    narrator("Counted", triangle_no, "triangles");
    log("Counted", triangle_no, "triangles");
-*/
 }
 
 // filename { output_file }

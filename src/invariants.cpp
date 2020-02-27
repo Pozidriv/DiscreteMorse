@@ -18,11 +18,12 @@ int count_triangles(vector<Node<int>> G) {
          for(int k=0; k<b.edge_ptrs.size(); k++) {
             triples++;
             Node<int> c = G[b.edge_ptrs[k]];
-            if(b.edge_ptrs[k] == j) continue;
+            if(b.edge_ptrs[k] == a.edge_ptrs[j] || b.edge_ptrs[k] == i) continue;
             for(int l=0; l<c.edge_ptrs.size(); l++) {
                if(i == c.edge_ptrs[l]) {
                   count++;
                   vertexc++;
+                  //narrator(i, a.edge_ptrs[j], b.edge_ptrs[k], c.edge_ptrs[l]);
                }
             }  // END l loop
          }  // END k loop
