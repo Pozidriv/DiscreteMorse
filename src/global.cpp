@@ -75,6 +75,7 @@ const string O_MAGMA_CONV = "magma_convexion"; // Converting shitty magma matrix
 // run magma_conv [input file name] {output file name}
 const int OC_MAGMA_CONC = 1;
 const string O_INVARIANTS = "variants"; // Computing invariants of a graph
+const string O_PERSEUS_PRINT = "pp"; // 
 
 // File pointers
 //-----------------------------------------------------------------

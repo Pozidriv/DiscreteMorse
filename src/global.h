@@ -45,6 +45,7 @@ extern const string O_MAGMA_CONV; // Converting shitty magma matrix format into 
 // run magma_conv [input file name] {output file name}
 extern const int OC_MAGMA_CONC;
 extern const string O_INVARIANTS; // 
+extern const string O_PERSEUS_PRINT; // 
 
 // File pointers
 extern ofstream F_log;

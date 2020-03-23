@@ -15,5 +15,5 @@
 #include "graph.h"
 #endif
 
-int count_triangles(vector<Node<int>> graph);
+int count_triangles(vector<Node<int>> graph, vector<vector<int>>& triangles);
 

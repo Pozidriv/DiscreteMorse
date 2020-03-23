@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int count_triangles(vector<Node<int>> G) {
+int count_triangles(vector<Node<int>> G, vector<vector<int>>& triangles) {
    debug("count_triangles", "Yo mama");
    int count=0, triples=0;
    for(int i=0; i<G.size(); i++) {
@@ -24,6 +24,9 @@ int count_triangles(vector<Node<int>> G) {
                   count++;
                   vertexc++;
                   //narrator(i, a.edge_ptrs[j], b.edge_ptrs[k], c.edge_ptrs[l]);
+                  
+                  // Add the triangle to the list, without checking if it in already (too expensive)
+                  triangles.push_back({ i, a.edge_ptrs[j], b.edge_ptrs[k] });
                }
             }  // END l loop
          }  // END k loop

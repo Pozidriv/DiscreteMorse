@@ -46,6 +46,7 @@ void O_adj_lists(string, vector<string>);
 void O_graph_homol(string, vector<string>);
 void O_invariants(string, vector<string>);
 void O_magma_conv(string, vector<string>);
+void O_perseus_print(string, vector<string>);
 
 
 
@@ -59,7 +60,8 @@ int main(int argc, char *argv[]) {
    cout << "========= Running Main =========" << endl;
 
    vector<string> modes = { "default", O_KGEN, O_CREPES, O_ADJ_LISTS, 
-                            O_GRAPH_HOMOL, O_MAGMA_CONV, O_INVARIANTS };
+                            O_GRAPH_HOMOL, O_MAGMA_CONV, O_INVARIANTS,
+                            O_PERSEUS_PRINT };
 
    string token, file, out;
    vector<string> arguments;
@@ -160,6 +162,10 @@ int main(int argc, char *argv[]) {
       case 6 : // 
                narrator("Option: invariants");
                O_invariants(file, arguments);
+               break;
+      case 7 : // 
+               narrator("Option: perseus print");
+               O_perseus_print(file, arguments);
                break;
       default: 
                narrator("Default option");
@@ -296,7 +302,8 @@ void O_invariants(string filename, vector<string> args) {
    print(F_ofile, my_graph);
    F_ofile.close();
    narrator("Printed graph to file.");
-   int triangle_no = count_triangles(my_graph);
+   vector<vector<int>> asdfghjkl; // useless
+   int triangle_no = count_triangles(my_graph, asdfghjkl);
    
    narrator("Counted", triangle_no, "triangles");
    log("Counted", triangle_no, "triangles");
@@ -334,4 +341,58 @@ void O_magma_conv(string filename, vector<string> args) {
    log("Finished writing to file.");
    F_ofile.close();
    F_ifile.close();
+}
+
+// Printing in the nmfsimtop format required by perseus
+// WARNING: vertices need to start at 1, not 0
+void O_perseus_print(string filename, vector<string> args) {
+   string ofile_name = OUT_DEFAULT;
+
+   narrator("Perseus Printer");
+   narrator(delimiter);
+
+   log("Input file:", DATA_ADJ_LISTS_MOD3);
+   F_ofile.open(ofile_name, ofstream::out);
+   F_ifile.open(DATA_ADJ_LISTS_MOD3, ifstream::in);
+   F_ofile << 3 << endl; // ambient dimension is 3.
+
+   vector<vector<int>> elabels;
+// ======================================================!!!!!!! FIX THIS CONSTANT 
+   int n=I_EXPECTED_REP_NO*12, edge_no;              // n is the number of vertices, edge_no nubmer of edges
+
+   F_ifile >> edge_no;
+   for(int i=0; i<edge_no; i++) {
+      int garbage, rep1, rep2, a, b;   // rep1,rep2: coset representatives, a,b: original points
+
+      F_ifile >> garbage >> garbage >> rep1 >> rep2 >> a >> b;
+      Matrix junk(F_ifile, 4);         // Discard the matrix
+      
+      int v1=(a-1)*I_EXPECTED_REP_NO+rep1, v2=(b-1)*I_EXPECTED_REP_NO+rep2;
+      //narrator(rep1, rep2, a, b, "|", v1, v2);
+      elabels.push_back(vector<int>({v1, v2}));
+   }
+   narrator("Finished reading edge labels", elabels.size());
+   narrator("Printing edges");
+   for(int i=0; i<elabels.size(); i++) {
+      F_ofile << "1 " << elabels[i][0] << " " << elabels[i][1] << " 1" << endl; // Double edges?
+   }
+
+   vector<Node<int>> my_graph;
+   graph_from_edges(n, elabels, my_graph);
+   narrator("Finished reconstructing the graph.");
+
+
+   narrator("Building the triangles.");
+   vector<vector<int> > triangles;
+   int triangle_no = count_triangles(my_graph, triangles);
+
+   for(int i=0; i<triangles.size(); i++) {
+      F_ofile << "2 " << triangles[i][0] << " "
+                      << triangles[i][1] << " "
+                      << triangles[i][2] << " 1" << endl;
+   }
+
+
+   F_ofile.close();
+   narrator("Done. Exiting.");
 }
