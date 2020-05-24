@@ -3,6 +3,19 @@
 The code is organised as follows.
 [main.cpp] is the main program, from which options are executed.
 
+# Options
+* `default` Default option; essentially a script
+* `test` Another script option
+* `k_blin_maker` Same as crepes, but using a fixed number of generators
+* `crepes` Generating coset representatives for a subgroup of Gamma
+* `adj_liszt` Computing adjacency lists for an arithmetic cover of the starting manifold
+* `guacomology` Computing the homology of a graph (WIP)
+* `magma_convexion` Converting magma formatted file to C++ readable file
+* `variants` Computing invariants of a graph (WIP)
+* `pp` Printing in Perseus readable format
+* `lest_mod3` List the elements of a given data file that are the identity mod 3
+* `volution` Volume computation (WIP)
+
 ## Option files
 
 * `magma_parser.*`
