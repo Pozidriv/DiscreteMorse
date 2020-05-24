@@ -26,22 +26,19 @@ The code is organised as follows.
 * `DataMikeStudent2.txt` Sage data provided by Aurel Page. 
 The file is, for each pair of points with adjacency witnesses, the list of adjacency witnesses:
 
-``
+```
 [ p, q ]
-
 [ comma separated list of adjacency witnesses ]
-``
+```
 
 * `starting_data.txt` Same information as `DataMikeStudent2.txt` in C++ readable format.
 The file starts with `n`, the number of lists of adjacency witnesses, followed by `n` lists of adjacency witnesses, each in the format:
 
-``
+```
 p q
-
 k
-
 list
-``
+```
 
 where `p` and `q` are the two points of hyperbolic space, `k` is the number of adjacency witnesses in `list`, and `list` is the list of adjacency witnesses (each is a 4x4 matrix).
 
@@ -54,11 +51,10 @@ The file starts with `n`, the number of coset representatives, followed by the `
 * `adjacency_lists_mod3_cover.txt` Adjacency witness lists for Gamma'. 
 The file starts with `n`, the number of adjacency witness lists, followed by `n` adjacency witness lists in the format:
 
-``
+```
 i size rep1 rep2 p q
-
 list
-``
+```
 
 where `i` is the index of the adjacency in the complete adjacency witness list (for all edges before removing empty lists; essentially for debugging purposes); `size` is the number of witnesses in the list for this specific edge (should always be 1); `rep1` coset representative for `p`; `rep2` coset representative for `q`; `p` and `q`, points from the original data for Gamma; `list` is the list of elements witnessing closeness between `rep1*p` and `rep2*q` in the quotient by Gamma'.
 
