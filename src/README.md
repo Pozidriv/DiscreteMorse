@@ -24,21 +24,22 @@ The code is organised as follows.
 
 * `4x4Id.txt` A space separated 4x4 identity matrix
 * `DataMikeStudent2.txt` Sage data provided by Aurel Page. 
-
 The file is, for each pair of points with adjacency witnesses, the list of adjacency witnesses:
 
 ``
 [ p, q ]
+
 [ comma separated list of adjacency witnesses ]
 ``
 
 * `starting_data.txt` Same information as `DataMikeStudent2.txt` in C++ readable format.
-
 The file starts with `n`, the number of lists of adjacency witnesses, followed by `n` lists of adjacency witnesses, each in the format:
 
 ``
 p q
+
 k
+
 list
 ``
 
@@ -48,15 +49,14 @@ where `p` and `q` are the two points of hyperbolic space, `k` is the number of a
 They are used to generate coset representatives for the subgroup of Gamma.
 
 * `coset_reps_mod3.txt` List of coset representatives for Gamma', the subgroup of Gamma consiting of all matrices that are the identity modulo 3.
-
 The file starts with `n`, the number of coset representatives, followed by the `n` coset representatives in 4x4 matrix format.
 
 * `adjacency_lists_mod3_cover.txt` Adjacency witness lists for Gamma'. 
-
 The file starts with `n`, the number of adjacency witness lists, followed by `n` adjacency witness lists in the format:
 
 ``
 i size rep1 rep2 p q
+
 list
 ``
 
